@@ -1,0 +1,13 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: ace01-ci
+  labels:
+    name: ace01-ci
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: ace01-dev
+  labels:
+    name: ace01-dev

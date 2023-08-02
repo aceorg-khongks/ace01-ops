@@ -1,0 +1,7 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: ace-selfsigned-issuer
+  namespace: ace01-dev
+spec:
+  selfSigned: {}

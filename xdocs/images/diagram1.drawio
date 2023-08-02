@@ -1,0 +1,61 @@
+<mxfile host="65bd71144e">
+    <diagram id="7s4tpCvav4gtR9b0IcHp" name="Page-1">
+        <mxGraphModel dx="715" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="j-wncY47qk9I945-Ejjs-1" value="Source repository&lt;br&gt;&lt;br&gt;(ACE artefacts)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="220" width="187.5" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="j-wncY47qk9I945-Ejjs-2" value="Cluster &lt;br&gt;operational repository&amp;nbsp;&lt;br&gt;&lt;br&gt;(built and tested YAMLs)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="220" width="187.5" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="j-wncY47qk9I945-Ejjs-3" value="build, package, test, version, release" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
+                    <mxGeometry x="406.25" y="250" width="150" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="j-wncY47qk9I945-Ejjs-4" value="deploy" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="250" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="j-wncY47qk9I945-Ejjs-5" value="&lt;b&gt;ace01-src&lt;/b&gt;&lt;br&gt;(from acexx-src template)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="207" y="330" width="176" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="j-wncY47qk9I945-Ejjs-6" value="&lt;b&gt;ace01-ops&lt;/b&gt;&lt;br&gt;(from acexx-ops template)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="585" y="330" width="177.5" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="6FtCYPQx9fpVWrgTbt3w-2" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="950" y="220" width="240" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="6FtCYPQx9fpVWrgTbt3w-3" value="OpenShift cluster" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="980" y="330" width="180" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="6FtCYPQx9fpVWrgTbt3w-5" value="config map" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="1080" y="250" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="6FtCYPQx9fpVWrgTbt3w-6" value="appconnect&lt;br&gt;pod" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="970" y="255" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="6FtCYPQx9fpVWrgTbt3w-8" value="config map" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="1090" y="260" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="6FtCYPQx9fpVWrgTbt3w-9" value="configuration" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="1100" y="270" width="80" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="6FtCYPQx9fpVWrgTbt3w-10" value="&lt;b&gt;Tekton&lt;/b&gt; &lt;br&gt;pipeline" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="418.75" y="210" width="125" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="6FtCYPQx9fpVWrgTbt3w-11" value="&lt;b&gt;ArgoCD&lt;/b&gt; &lt;br&gt;application" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+                    <mxGeometry x="797.5" y="210" width="125" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="-faAT9Uqb-eq2LBU9O2p-1" value="Image registry&lt;br&gt;&lt;br&gt;(Tested&amp;nbsp;ACE images)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="80" width="187.5" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="CNEnKY-MuUW3pNFNHH6E-1" value="developer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+                    <mxGeometry x="268.75" y="380" width="30" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="CNEnKY-MuUW3pNFNHH6E-2" value="administrator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+                    <mxGeometry x="658.75" y="380" width="30" height="60" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
