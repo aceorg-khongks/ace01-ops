@@ -1,0 +1,29 @@
+apiVersion: appconnect.ibm.com/v1beta1
+kind: Dashboard
+metadata:
+  name: dashboard
+spec:
+  license:
+    accept: true
+    license: L-LFMR-BTD75V
+    use: CloudPakForIntegrationNonProduction
+  logFormat: basic
+  logLevel: info
+  pod:
+    containers:
+      content-server:
+        resources:
+          limits:
+            cpu: 250m
+      control-ui:
+        resources:
+          limits:
+            cpu: 250m
+            memory: 250Mi
+  replicas: 1
+  storage:
+    class: managed-nfs-storage
+    size: 5Gi
+    type: persistent-claim
+  useCommonServices: true
+  version: 12.0.9.0-r1
