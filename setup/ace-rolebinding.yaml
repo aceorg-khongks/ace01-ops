@@ -7,9 +7,9 @@ metadata:
   namespace: ace01-dev
 subjects:
 # You can specify more than one "subject"
-- kind: User
-  name: system:serviceaccount:openshift-gitops:openshift-gitops-argocd-application-controller # "name" is case sensitive
-  apiGroup: rbac.authorization.k8s.io
+- kind: ServiceAccount
+  name: openshift-gitops-argocd-application-controller
+  namespace: openshift-gitops
 roleRef:
   # "roleRef" specifies the binding to a Role / ClusterRole
   kind: Role #this must be Role or ClusterRole

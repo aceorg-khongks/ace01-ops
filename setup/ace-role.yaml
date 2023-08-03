@@ -5,8 +5,8 @@ metadata:
   name: ace-deployer
 rules:
 - apiGroups: [""] # "" indicates the core API group
-  resources: ["secrets", "services"]
+  resources: ["secrets", "services", "configmaps"]
   verbs: ["*"]
-- apiGroups: ["appconnect.ibm.com"] # mq.ibm.com API group - TBC
-  resources: ["integrationservers", "configurations"] # TBC
+- apiGroups: ["appconnect.ibm.com"] # appconnect.ibm.com API group
+  resources: ["integrationservers", "configurations", "dashboards"]
   verbs: ["*"]

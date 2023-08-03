@@ -25,5 +25,5 @@ spec:
     class: managed-nfs-storage
     size: 5Gi
     type: persistent-claim
-  useCommonServices: true
+  useCommonServices: false
   version: 12.0.9.0-r1
