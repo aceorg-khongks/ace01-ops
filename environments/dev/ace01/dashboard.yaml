@@ -6,7 +6,7 @@ spec:
   license:
     accept: true
     license: L-LFMR-BTD75V
-    use: CloudPakForIntegrationNonProduction
+    use: AppConnectEnterpriseNonProductionFREE
   logFormat: basic
   logLevel: info
   pod:
