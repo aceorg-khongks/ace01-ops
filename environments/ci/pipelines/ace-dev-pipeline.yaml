@@ -32,7 +32,7 @@ spec:
   tasks:
   - name: clone-source
     taskRef:
-      name: mq-git-clone
+      name: ace-git-clone
     workspaces:
     - name: output
       workspace: shared-data
@@ -66,7 +66,7 @@ spec:
   - name: gen-yamls
     runAfter: ["build-image"]
     taskRef:
-      name: mq-gen-yamls
+      name: ace-gen-yamls
     workspaces:
     - name: source
       workspace: shared-data
@@ -74,7 +74,7 @@ spec:
   - name: test
     runAfter: ["gen-yamls"]
     taskRef:
-      name: mq-test
+      name: ace-test
     workspaces:
     - name: source
       workspace: shared-data
@@ -98,7 +98,7 @@ spec:
   - name: store-yamls
     runAfter: ["clone-ops"]
     taskRef:
-      name: mq-store-yamls
+      name: ace-store-yamls
     workspaces:
     - name: source
       workspace: shared-data
