@@ -32,7 +32,7 @@ spec:
   tasks:
   - name: clone-source
     taskRef:
-      name: ace-git-clone
+      name: git-clone
     workspaces:
     - name: output
       workspace: shared-data
