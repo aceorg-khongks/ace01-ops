@@ -1,0 +1,49 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: ace-dev-pipeline-run-
+  namespace: ace01-ci
+spec:
+  serviceAccountName: pipeline
+  pipelineRef:
+    name: ace-dev-pipeline
+  workspaces:
+  - name: shared-data
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+  - name: git-creds
+    secret:
+      secretName: ace01-git-credentials
+  params:
+  - name: source-repo-url
+    value: https://github.com/$GITORG/ace01-src.git
+  - name: dockerfile
+    value: $(workspaces.source.path)/repo/main/bin/Dockerfile
+  - name: ops-repo-url
+    value: https://github.com/$GITORG/ace01-ops.git
+  - name: image-reference
+    #value: registry.dev.svc.cluster.local:5000/ace01-ci/mq01:0.0.1
+    value: image-registry.openshift-image-registry.svc:5000/ace01-ci/ace01:0.0.1
+  - name: storage-driver
+    value: vfs
+  - name: tls-verify
+    value: "false"
+  - name: git-user-name
+    value: "khongks"
+  - name: git-user-email
+    value: "khongks@gmail.com"
+  - name: git-script
+    value: |
+      # Push changes to GitHub
+      cd $(workspaces.source.path)/repo/ops
+      git checkout -b main
+      git add .
+      git commit -s -m "Updated by build pipeline"
+      git push origin main
+
+      # All done
