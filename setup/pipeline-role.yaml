@@ -4,6 +4,6 @@ metadata:
   namespace: ace01-ci
   name: pipeline-deployer
 rules:
-- apiGroups: ["tasks.tekton.dev"]
+- apiGroups: ["tekton.dev"]
   resources: ["pipelines", "pipelinerunes", "tasks"]
   verbs: ["*"]
