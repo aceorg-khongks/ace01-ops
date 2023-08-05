@@ -2,10 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: convert-p12-to-jks
-<<<<<<< HEAD
-=======
   namespace: ace01-ci
->>>>>>> 253c2dc (Update pipelines)
 spec:
   params:
     - name: p12-file
