@@ -46,10 +46,14 @@ spec:
     # --------------------------------------------------------------
     - name: cpu-limit
       default: 2
+      type: integer
     - name: memory-limit
       default: "1Gi"
+      type: string
     - name: replicas
       default: 1
+      type: integer
+
     # --------------------------------------------------------------
     # optional arguments
     #   Configuration resources that can be added to
