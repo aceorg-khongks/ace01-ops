@@ -14,7 +14,7 @@ spec:
   project: default
   source:
     path: environments/ci/pipelines/
-    repoURL: https://github.com//ace01-ops.git
+    repoURL: https://github.com/aceorg-khongks/ace01-ops.git
     targetRevision: main
     directory:
       recurse: true
