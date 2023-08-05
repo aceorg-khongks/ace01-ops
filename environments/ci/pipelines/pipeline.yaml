@@ -209,7 +209,7 @@ spec:
 
     - name: clone-source
       taskRef:
-        name: git-clone-home
+        name: git-clone
       params:
         - name: url
           value: "$(params.git-repository)"
@@ -264,8 +264,6 @@ spec:
         - name: image
           value: $(params.target-build-image)
       runAfter:
-        # need the git repository to be able to
-        #  compile the project into a bar file
         - test
       workspaces:
         - name: output

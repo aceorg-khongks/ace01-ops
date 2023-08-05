@@ -1,0 +1,36 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ace-create-integration-server-yaml-file
+  namespace: ace01-ci
+spec:
+  workspaces:
+    - name: output
+      description: Create App Connect Integration Server YAML
+  steps:
+    - name: echo
+      image: origin-cli
+      script: |
+        #!/bin/sh
+        echo "Create App Connect Integration Server YAML"
+
+        # Generate Kubernetes artefacts from corresponding source artefacts
+        cd $(workspaces.output.path)/repo/main
+
+        # Build YAMLs for queue manager; store in /yamls folder
+        mkdir -p yamls
+
+        # Copy simple YAMLs from output
+        cp config/yamls/mq01.yaml yamls/.
+        cp config/yamls/mq01-ingress.yaml yamls/.
+
+        # Generate qm.ini and MQSC YAMLs
+        kubectl create configmap mq01-ini -n mq01-dev --from-file=mq01.ini=config/qm.ini --dry-run=client -o yaml > yamls/mq01-ini.yaml
+        kubectl create configmap mq01-mqsc -n mq01-dev --from-file=user/mqsc/mq01.mqsc --dry-run=client -o yaml > yamls/mq01-mqsc.yaml
+
+        # We should probably copy mqs.ini into Docker image, as it will contain information relevant to the migrated queue manager
+        ls config/mqs.ini
+
+        # List YAMLs
+        ls -alt yamls/*.yaml
+        cat yamls/*.yaml
