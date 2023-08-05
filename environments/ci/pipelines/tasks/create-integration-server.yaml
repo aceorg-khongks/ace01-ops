@@ -45,13 +45,10 @@ spec:
     #   scaling and resource limits
     # --------------------------------------------------------------
     - name: cpu-limit
-      default: '2'
       type: string
     - name: memory-limit
-      default: "1Gi"
       type: string
     - name: replicas
-      default: '1'
       type: string
 
     # --------------------------------------------------------------
