@@ -1,0 +1,73 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ace-pipeline-deployer-role
+  namespace: ace01-ci
+rules:
+  # ########################################################
+  #  permissions for creating ACE resources
+  # ########################################################
+
+  - apiGroups:
+      - appconnect.ibm.com
+    resources:
+      - configurations
+      - integrationservers
+    verbs:
+      - create
+      - patch
+      - update
+      - get
+
+  # ########################################################
+  #  permissions for creating the custom Docker image with
+  #   the ACE bar baked into it
+  # ########################################################
+
+  - apiGroups:
+      - image.openshift.io
+    resources:
+      - imagestreams
+    verbs:
+      - create
+      - update
+      - patch
+      - get
+  - apiGroups:
+      - build.openshift.io
+    resources:
+      - builds
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - build.openshift.io
+    resources:
+      - buildconfigs
+    verbs:
+      - create
+      - update
+      - patch
+      - get
+  - apiGroups:
+      - build.openshift.io
+    resources:
+      - buildconfigs
+      - buildconfigs/instantiatebinary
+    verbs:
+      - get
+      - list
+      - create
+
+  # ########################################################
+  # permissions for reading the secrets that contain
+  #  values for updating templates
+  # ########################################################
+
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get

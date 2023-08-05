@@ -1,0 +1,104 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: ace-create-bar-file
+  namespace: ace01-ci
+spec:
+
+  params:
+    - name: ace-project-name
+      description: name of the App Connect project to build the bar file for
+
+    - name: java-project-name
+      default: ""
+      description: |+
+        Name of a Java project with implementation of Java Compute nodes.
+        Leave this blank if no Java project is needed
+
+  results:
+    - name: folder
+      description: folder containing the created bar file
+    - name: file
+      description: name of the created bar file
+
+  workspaces:
+    - name: output
+      description: workspace with the ACE resources in
+
+  steps:
+    - name: make-output-writable
+      image: image-registry.openshift-image-registry.svc:5000/openshift/tools
+      script: |
+        #!/bin/bash
+
+        set -e
+
+        echo "preparing bar output location to be writable by aceuser"
+        mkdir -p /workspace/output/bars
+        chmod a+wrx /workspace/output/bars
+
+        if [ -z "$(params.java-project-name)" ]
+        then
+          echo "No Java project to compile"
+        else
+          echo "making Java project writable to allow compiling"
+          chmod -R a+wrx "/workspace/output/ace-projects/$(params.java-project-name)"
+        fi
+
+
+    - name: run-ace
+      # see https://www.ibm.com/docs/en/app-connect/12.0?topic=cacerid-building-sample-app-connect-enterprise-image-using-docker
+      #  for alternate images and versions that can be used for this
+      image: cp.icr.io/cp/appc/ace:12.0.6.0-r1@sha256:003ca6615312b0987fca1c09d676a77fc2c77ecc8607dfaa49f2e8e1976a6a15
+      securityContext:
+        # run as the aceuser user id
+        runAsUser: 1001
+        runAsGroup: 1001
+        runAsNonRoot: false
+      env:
+        - name: LICENSE
+          value: accept
+      script: |
+        #!/bin/bash
+
+        set -e
+
+        echo "building a bar file for use with App Connect"
+
+        echo "setting up environment"
+        source /opt/ibm/ace-12/server/bin/mqsiprofile
+
+        echo "verifying bar output location"
+        BAR_FOLDER="/workspace/output/bars"
+        ls -l $BAR_FOLDER
+
+        echo "confirming bar file location"
+        BAR_FILE="$BAR_FOLDER/integration.bar"
+        echo $BAR_FILE
+
+        echo "confirming workspace location"
+        ACE_PROJECTS_WORKSPACE="/workspace/output/ace-projects"
+        ls -l $ACE_PROJECTS_WORKSPACE
+
+        echo "checking Java project"
+        if [ -n "$(params.java-project-name)" ]; then
+          echo "$(params.java-project-name) needs to be built with the bar"
+          JAVA_BUILD_OPTION="--project $(params.java-project-name)"
+        else
+          echo "no Java dependencies needed"
+          JAVA_BUILD_OPTION=""
+        fi
+
+        echo "creating bar"
+        ibmint package \
+          --input-path $ACE_PROJECTS_WORKSPACE \
+          --project $(params.ace-project-name) \
+          --output-bar-file $BAR_FILE \
+          $JAVA_BUILD_OPTION
+
+        echo "checking bar"
+        ls -l $BAR_FILE
+
+        echo "writing results for later tasks to reuse"
+        echo -n "$BAR_FOLDER" > $(results.folder.path)
+        echo -n "integration.bar" > $(results.file.path)
