@@ -10,16 +10,20 @@ spec:
     # --------------------------------------------------------------
     - name: integration-name
       description: name to give the integration server name
+      type: string
     - name: ace-namespace
       description: namespace to create the IntegrationServer in
+      type: string
     # --------------------------------------------------------------
     # what flavour of App Connect to run
     #  for details, see https://www.ibm.com/docs/en/app-connect/containers_cd?topic=obtaining-app-connect-enterprise-server-image-from-cloud-container-registry
     # --------------------------------------------------------------
     - name: ace-server-version
       description: version of App Connect Enterprise to use
+      type: string
     - name: ace-server-license
       description: ID of the license to use for the IntegrationServer
+      type: string
     # --------------------------------------------------------------
     # details of the Docker image that will be created to run the
     #  integration server
@@ -29,10 +33,13 @@ spec:
         Docker image to use as a base for the server.
         Example values for this can be found at
         https://www.ibm.com/docs/en/app-connect/containers_cd?topic=obtaining-app-connect-enterprise-server-image-from-cloud-container-registry
+      type: string
     - name: bar-file-location
       description: folder containing an integration.bar file to deploy
+      type: string
     - name: integration-tag
       description: docker tag to use for the integration image
+      type: string
     # --------------------------------------------------------------
     # optional arguments
     #   scaling and resource limits
@@ -51,18 +58,23 @@ spec:
     - name: policies-configuration
       description: name of the policies project to use
       default: ""
+      type: string
     - name: setdbparms-configuration
       description: name of the setdbparms configuration object to use
       default: ""
+      type: string
     - name: datasource-configuration
       description: name of the data source object to use
       default: ""
+      type: string
     - name: serverconf-configuration
       description: name of the server.conf.yaml configuration object to use
       default: ""
+      type: string
     - name: truststore-configuration
       description: name of the truststore configuration object to use
       default: ""
+      type: string
     # --------------------------------------------------------------
 
   workspaces:
