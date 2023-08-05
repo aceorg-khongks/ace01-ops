@@ -46,10 +46,13 @@ spec:
     # --------------------------------------------------------------
     - name: cpu-limit
       type: string
+      default: "1"
     - name: memory-limit
       type: string
+      default: "1Gi"
     - name: replicas
       type: string
+      default: "1"
 
     # --------------------------------------------------------------
     # optional arguments
