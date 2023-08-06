@@ -56,8 +56,8 @@ spec:
         cp.icr.io/cp/appc/ace:12.0.9.0-r1@sha256:0e03de28d175e15238896b1ae00b54ddda6a46b793173f9a7707187d6b58202e
       securityContext:
         # run as the aceuser user id
-        # runAsUser: 1001
-        # runAsGroup: 1001
+        runAsUser: 1001
+        runAsGroup: 1001
         runAsNonRoot: false
       env:
         - name: LICENSE
