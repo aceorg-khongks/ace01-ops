@@ -2,6 +2,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: ace-pipeline-deployer-rolebinding
+  namespace: ace01-ci
 subjects:
   - kind: ServiceAccount
     name: ace-pipeline-deployer-serviceaccount

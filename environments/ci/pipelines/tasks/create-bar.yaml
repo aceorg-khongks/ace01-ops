@@ -35,16 +35,16 @@ spec:
         set -e
 
         echo "preparing bar output location to be writable by aceuser"
-        mkdir -p /workspace/output/bars
-        chmod a+wrx /workspace/output/bars
+        # mkdir -p /workspace/output/bars
+        # chmod a+wrx /workspace/output/bars
 
-        if [ -z "$(params.java-project-name)" ]
-        then
-          echo "No Java project to compile"
-        else
-          echo "making Java project writable to allow compiling"
-          chmod -R a+wrx "/workspace/output/ace-projects/$(params.java-project-name)"
-        fi
+        # if [ -z "$(params.java-project-name)" ]
+        # then
+        #   echo "No Java project to compile"
+        # else
+        #   echo "making Java project writable to allow compiling"
+        #   chmod -R a+wrx "/workspace/output/ace-projects/$(params.java-project-name)"
+        # fi
 
     - name: run-ace
       # see https://www.ibm.com/docs/en/app-connect/12.0?topic=cacerid-building-sample-app-connect-enterprise-image-using-docker
