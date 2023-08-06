@@ -27,8 +27,8 @@ spec:
 
   steps:
     - name: make-output-writable
-      # image: image-registry.openshift-image-registry.svc:5000/openshift/tools
-      image: alpine
+      image: image-registry.openshift-image-registry.svc:5000/openshift/tools
+      # image: alpine
       script: |
         #!/bin/bash
 
