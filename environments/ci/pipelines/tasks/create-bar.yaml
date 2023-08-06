@@ -34,6 +34,8 @@ spec:
 
         set -e
 
+        tree /workspace/output
+
         echo "preparing bar output location to be writable by aceuser"
         mkdir -p /workspace/output/bars
         chmod a+wrx /workspace/output/bars
