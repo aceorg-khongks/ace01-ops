@@ -7,23 +7,22 @@ spec:
 
   params:
     - name: ace-project-name
-      description: name of the App Connect project to build the bar file for
+      description: Name of the App Connect project to build the bar file for
 
     - name: java-project-name
       default: ""
-      description: |
-        Name of a Java project with implementation of Java Compute nodes.
-        Leave this blank if no Java project is needed
+      description: Name of a Java project with implementation of Java Compute nodes. Leave this blank if no Java project is needed
 
   results:
     - name: folder
-      description: folder containing the created bar file
+      description: Folder containing the created bar file
+    
     - name: file
-      description: name of the created bar file
+      description: Name of the created bar file
 
   workspaces:
     - name: output
-      description: workspace with the ACE resources in
+      description: Workspace with the ACE resources in
 
   steps:
     - name: make-output-writable
