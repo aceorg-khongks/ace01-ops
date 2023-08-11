@@ -268,7 +268,7 @@ spec:
         - name: image
           value: $(params.target-build-image)
         - name: insecure_registry
-          value: 'true'
+          value: true
         - name: dockerfile
           value: Dockerfile
         - name: context
