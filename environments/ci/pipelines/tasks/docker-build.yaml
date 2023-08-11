@@ -60,6 +60,7 @@ spec:
       value: /certs/client
     workingDir: $(workspaces.output.path)
     script: |
+      docker pull cp.icr.io/cp/appc/ace:12.0.9.0-r1
       docker build \
         $(params.build_extra_args) \
         --no-cache \
