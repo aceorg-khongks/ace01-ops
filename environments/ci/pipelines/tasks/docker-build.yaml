@@ -27,7 +27,7 @@ spec:
     default: docker:dind
   - name: dockerfile
     description: Path to the Dockerfile to build.
-    default: ./Dockerfile
+    default: Dockerfile
   - name: context
     description: Path to the directory to use as context.
     default: .
