@@ -11,7 +11,7 @@ spec:
 
     - name: java-project-name
       default: ""
-      description: |+
+      description: |
         Name of a Java project with implementation of Java Compute nodes.
         Leave this blank if no Java project is needed
 
