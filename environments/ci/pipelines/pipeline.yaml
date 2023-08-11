@@ -209,6 +209,7 @@ spec:
 
     - name: clone-source
       taskRef:
+        kind: Task
         name: git-clone
       params:
         - name: url
@@ -222,6 +223,7 @@ spec:
 
     - name: bar-file
       taskRef:
+        kind: Task
         name: ace-create-bar-file
       params:
         - name: ace-project-name
@@ -238,6 +240,7 @@ spec:
 
     - name: test
       taskRef:
+        kind: Task
         name: ace-run-tests
       params:
         - name: bar-file-location
@@ -259,6 +262,7 @@ spec:
 
     - name: docker-build
       taskRef:
+        kind: Task
         name: docker-build
       params:
         - name: image
@@ -279,6 +283,7 @@ spec:
 
     - name: update-templates
       taskRef:
+        kind: Task
         name: ace-update-templates-from-secrets
       params:
         - name: credentials
@@ -294,6 +299,7 @@ spec:
 
     - name: p12
       taskRef:
+        kind: Task
         name: read-secret
       params:
         - name: name
@@ -323,6 +329,7 @@ spec:
 
     - name: p12-password
       taskRef:
+        kind: Task
         name: read-secret
       params:
         - name: name
@@ -352,6 +359,7 @@ spec:
 
     - name: jks
       taskRef:
+        kind: Task
         name: convert-p12-to-jks
       params:
         - name: p12-file
@@ -370,6 +378,7 @@ spec:
 
     - name: data-source
       taskRef:
+        kind: Task
         name: ace-create-datasource
       params:
         - name: ace-namespace
@@ -396,6 +405,7 @@ spec:
 
     - name: policies
       taskRef:
+        kind: Task
         name: ace-create-policy-project
       params:
         - name: ace-namespace
@@ -422,6 +432,7 @@ spec:
 
     - name: setdbparms
       taskRef:
+        kind: Task
         name: ace-create-configuration
       params:
         - name: ace-namespace
@@ -450,6 +461,7 @@ spec:
 
     - name: serverconf
       taskRef:
+        kind: Task
         name: ace-create-configuration
       params:
         - name: ace-namespace
@@ -478,6 +490,7 @@ spec:
 
     - name: truststore
       taskRef:
+        kind: Task
         name: ace-create-configuration
       params:
         - name: ace-namespace
@@ -500,6 +513,7 @@ spec:
 
     - name: integration-server
       taskRef:
+        kind: Task
         name: ace-create-integration-server
       params:
         # --------------------------------------------------------------
