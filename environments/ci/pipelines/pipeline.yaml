@@ -270,7 +270,7 @@ spec:
         - name: DOCKERFILE
           value: ./Dockerfile
         - name: IMAGE_PUSH_SECRET_NAME
-          value: ibm-registry-secret
+          value: openshift-secret
       runAfter:
         - test
       workspaces:
