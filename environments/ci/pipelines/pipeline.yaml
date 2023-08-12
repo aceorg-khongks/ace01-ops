@@ -271,6 +271,8 @@ spec:
           value: ./Dockerfile
         - name: IMAGE_PUSH_SECRET_NAME
           value: openshift-secret
+        - name: TLSVERIFY
+          value: false
       runAfter:
         - test
       workspaces:
