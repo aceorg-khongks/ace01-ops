@@ -50,7 +50,7 @@ spec:
     description: Skip pushing the built image
     default: "false"
   workspaces:
-  - name: source
+  - name: output
   - name: sslcertdir
     optional: true
   - name: dockerconfig
@@ -67,7 +67,7 @@ spec:
   steps:
   - name: build
     image: quay.io/buildah/stable:v1.29.0
-    workingDir: $(workspaces.source.path)
+    workingDir: $(workspaces.output.path)
     script: | 
       [[ "$(workspaces.sslcertdir.bound)" == "true" ]] && CERT_DIR_FLAG="--cert-dir $(workspaces.sslcertdir.path)"
 
