@@ -267,8 +267,6 @@ spec:
       params:
         - name: IMAGE
           value: $(params.target-build-image)
-        - name: IMAGE_PUSH_SECRET_NAME
-          value: image-push-secrets
         - name: DOCKERFILE
           value: ./Dockerfile
         - name: IMAGE_PUSH_SECRET_NAME
