@@ -260,19 +260,19 @@ spec:
         - name: output
           workspace: shared-workspace
 
-    - name: docker-build
+    - name: build-and-push-image
       taskRef:
         kind: Task
-        name: docker-build
+        name: buildah
       params:
-        - name: image
+        - name: IMAGE
           value: $(params.target-build-image)
-        - name: insecure_registry
-          value: true
-        - name: dockerfile
-          value: Dockerfile
-        - name: context
-          value: .
+        - name: IMAGE_PUSH_SECRET_NAME
+          value: image-push-secrets
+        - name: DOCKERFILE
+          value: ./Dockerfile
+        - name: IMAGE_PUSH_SECRET_NAME
+          value: ibm-registry-secret
       runAfter:
         - test
       workspaces:
