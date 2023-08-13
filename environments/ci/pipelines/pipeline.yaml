@@ -263,21 +263,38 @@ spec:
     - name: build-and-push-image
       taskRef:
         kind: Task
-        name: buildah
+        name: docker-build
       params:
-        - name: IMAGE
+        - name: image
           value: "$(params.target-build-image)"
-        - name: DOCKERFILE
+        - name: dockerfile
           value: ./Dockerfile
-        - name: IMAGE_PUSH_SECRET_NAME
-          value: openshift-secret
-        - name: TLSVERIFY
-          value: false
+        - name: context
+          value: .
       runAfter:
         - test
       workspaces:
         - name: output
           workspace: shared-workspace
+
+    # - name: build-and-push-image
+    #   taskRef:
+    #     kind: Task
+    #     name: buildah
+    #   params:
+    #     - name: IMAGE
+    #       value: "$(params.target-build-image)"
+    #     - name: DOCKERFILE
+    #       value: ./Dockerfile
+    #     - name: IMAGE_PUSH_SECRET_NAME
+    #       value: openshift-secret
+    #     - name: TLSVERIFY
+    #       value: false
+    #   runAfter:
+    #     - test
+    #   workspaces:
+    #     - name: output
+    #       workspace: shared-workspace
 
     # --------------------------------------------------------
 
@@ -514,7 +531,7 @@ spec:
     - name: integration-server
       taskRef:
         kind: Task
-        name: ace-create-integration-server
+        name: ace-create-integration-server-yaml-file
       params:
         # --------------------------------------------------------------
         # details of the IntegrationServer to create
