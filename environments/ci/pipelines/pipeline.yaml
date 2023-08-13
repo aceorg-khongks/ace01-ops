@@ -271,6 +271,8 @@ spec:
           value: ./Dockerfile
         - name: context
           value: .
+        - name: insecure_registry
+          value: true
       runAfter:
         - test
       workspaces:
