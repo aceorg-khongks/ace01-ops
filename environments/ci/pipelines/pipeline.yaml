@@ -199,7 +199,7 @@ spec:
     - name: app-connect-enterprise-base-image
       default: "cp.icr.io/cp/appc/ace-server-prod@sha256:473bbea96e65025c11c91014ac8dd72641212bd2f5f35d661dca7b3242f4155c"
     - name: target-build-image
-      default: "image-registry.openshift-image-registry.svc:5000/ace01-ci/ace01:0.0.1"
+      default: "quay.io/kskhong/ace01:1.0.0"
 
     # ########################################################
 
