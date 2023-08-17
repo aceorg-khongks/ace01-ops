@@ -261,45 +261,43 @@ spec:
         - name: output
           workspace: shared-workspace
 
-    - name: build-and-push-image
-      taskRef:
-        kind: Task
-        name: docker-build
-      params:
-        - name: image
-          value: "$(params.target-build-image)"
-        - name: dockerfile
-          value: ./Dockerfile
-        - name: context
-          value: .
-        - name: insecure_registry
-          value: 'true'
-      runAfter:
-        - test
-      workspaces:
-        - name: dockerconfig
-          workspace: dockerconfig-workspace
-        - name: output
-          workspace: shared-workspace
-
     # - name: build-and-push-image
     #   taskRef:
     #     kind: Task
-    #     name: buildah
+    #     name: docker-build
     #   params:
-    #     - name: IMAGE
+    #     - name: image
     #       value: "$(params.target-build-image)"
-    #     - name: DOCKERFILE
+    #     - name: dockerfile
     #       value: ./Dockerfile
-    #     - name: TLSVERIFY
-    #       value: 'false'
+    #     - name: context
+    #       value: .
+    #     - name: insecure_registry
+    #       value: 'true'
     #   runAfter:
     #     - test
     #   workspaces:
     #     - name: output
     #       workspace: shared-workspace
-    #     - name: dockerconfig
-    #       workspace: dockerconfig-workspace
+
+    - name: build-and-push-image
+      taskRef:
+        kind: Task
+        name: buildah
+      params:
+        - name: IMAGE
+          value: "$(params.target-build-image)"
+        - name: DOCKERFILE
+          value: ./Dockerfile
+        - name: TLSVERIFY
+          value: 'false'
+      runAfter:
+        - test
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+        - name: dockerconfig
+          workspace: dockerconfig-workspace
 
     # --------------------------------------------------------
 
