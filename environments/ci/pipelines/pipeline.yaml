@@ -289,12 +289,14 @@ spec:
         - name: DOCKERFILE
           value: ./Dockerfile
         - name: TLSVERIFY
-          value: false
+          value: 'false'
       runAfter:
         - test
       workspaces:
         - name: output
           workspace: shared-workspace
+        - name: dockerconfig
+          workspace: dockerconfig-ws
 
     # --------------------------------------------------------
 
@@ -582,3 +584,4 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
+        - name: dockerconfig-workspace
