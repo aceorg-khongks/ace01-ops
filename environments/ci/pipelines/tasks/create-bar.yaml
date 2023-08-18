@@ -66,8 +66,6 @@ spec:
 
         set -e
 
-        ls -R /workspace/output
-
         echo "building a bar file for use with App Connect"
 
         echo "setting up environment"

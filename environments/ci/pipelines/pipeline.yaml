@@ -296,8 +296,8 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
-        # - name: dockerconfig
-        #   workspace: dockerconfig-workspace
+        - name: dockerconfig
+          workspace: dockerconfig-workspace
 
     # --------------------------------------------------------
 
