@@ -17,7 +17,7 @@ metadata:
 spec:
   workspaces:
     - name: shared-workspace
-#    - name: dockerconfig-workspace
+    - name: dockerconfig-workspace
 
   params:
     # ########################################################
