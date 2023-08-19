@@ -76,6 +76,7 @@ spec:
         # if config.json exists at workspace root, we use that
         if test -f "$(workspaces.dockerconfig.path)/config.json"; then
           export DOCKER_CONFIG="$(workspaces.dockerconfig.path)"
+          cat $(workspaces.dockerconfig.path)/config.json
 
         # else we look for .dockerconfigjson at the root
         elif test -f "$(workspaces.dockerconfig.path)/.dockerconfigjson"; then
