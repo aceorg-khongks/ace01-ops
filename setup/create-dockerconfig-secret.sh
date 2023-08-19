@@ -3,8 +3,8 @@
 # need to export IBM_ENTITLEMENT_KEY
 NAMESPACE=${1:-ace01-ci}
 
-IMAGE_REGISTRY_SERVICE_AUTH_B64=$(echo "kubeadmin:$(oc whoami -t)" | base64)
-IBM_ENTITLEMENT_AUTH_B64=$(echo cp:${IBM_ENTITLEMENT_KEY} | base64)
+IMAGE_REGISTRY_SERVICE_AUTH_B64=$(echo -n "kubeadmin:$(oc whoami -t)" | base64)
+IBM_ENTITLEMENT_AUTH_B64=$(echo -n cp:${IBM_ENTITLEMENT_KEY} | base64)
 
 echo ${IMAGE_REGISTRY_SERVICE_AUTH_B64}
 echo ${IBM_ENTITLEMENT_AUTH_B64}
