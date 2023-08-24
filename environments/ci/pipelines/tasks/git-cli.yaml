@@ -21,7 +21,7 @@ spec:
     after the git operation.
 
   workspaces:
-    - name: source
+    - name: output
       description: A workspace that contains the fetched git repository.
 
     - name: input
