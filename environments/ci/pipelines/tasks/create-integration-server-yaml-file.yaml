@@ -20,7 +20,7 @@ spec:
     - name: output
   steps:
     - name: create-is-yaml
-      image: 'image-registry.openshift-image-registry.svc:5000/openshift/tools
+      image: 'image-registry.openshift-image-registry.svc:5000/openshift/tools'
       script: |
         #!/bin/sh
         echo "Create App Connect Integration Server YAML"
