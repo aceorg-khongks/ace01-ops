@@ -28,12 +28,12 @@ spec:
     # details of the Docker image that will be created to run the
     #  integration server
     # --------------------------------------------------------------
-    - name: ace-server-base-image
-      description: |+
-        Docker image to use as a base for the server.
-        Example values for this can be found at
-        https://www.ibm.com/docs/en/app-connect/containers_cd?topic=obtaining-app-connect-enterprise-server-image-from-cloud-container-registry
-      type: string
+    # - name: ace-server-base-image
+    #   description: |+
+    #     Docker image to use as a base for the server.
+    #     Example values for this can be found at
+    #     https://www.ibm.com/docs/en/app-connect/containers_cd?topic=obtaining-app-connect-enterprise-server-image-from-cloud-container-registry
+    #   type: string
     - name: bar-file-location
       description: folder containing an integration.bar file to deploy
       type: string
