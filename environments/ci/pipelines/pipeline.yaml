@@ -554,12 +554,14 @@ spec:
         # details of the Docker image that will be created to run the
         #  integration server
         # --------------------------------------------------------------
-        - name: ace-server-base-image
-          value: "$(params.app-connect-enterprise-base-image)"
-        - name: bar-file-location
-          value: "$(tasks.bar-file.results.folder)"
+        # - name: ace-server-base-image
+        #   value: "$(params.app-connect-enterprise-base-image)"
+        # - name: bar-file-location
+        #   value: "$(tasks.bar-file.results.folder)"
         - name: integration-tag
           value: "$(tasks.clone-source.results.commit)"
+        - name: target-build-image
+          value: "$(params.target-build-image)"
         # --------------------------------------------------------------
         #  configuration resources to add to the integration server
         # --------------------------------------------------------------

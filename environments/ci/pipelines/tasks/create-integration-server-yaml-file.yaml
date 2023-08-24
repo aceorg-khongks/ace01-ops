@@ -4,33 +4,36 @@ metadata:
   name: ace-create-integration-server-yaml-file
   namespace: ace01-ci
 spec:
+  description: Create App Connect Integration Server YAML
+  params:
+    - name: integration-name
+      description: Name of the integration server.
+    - name: ace-namespace
+      description: Namespace of the ACE integration server.
+    - name: ace-server-version
+      description: Integration server version to be deployed.
+    - name: ace-server-license
+      description: License ID of Cloud Pak for Integration.
+    - name: target-build-image
+      description: Image URL referencing the docker image.
   workspaces:
     - name: output
-      description: Create App Connect Integration Server YAML
   steps:
-    - name: echo
+    - name: create-is-yaml
       image: origin-cli
       script: |
         #!/bin/sh
         echo "Create App Connect Integration Server YAML"
 
         # Generate Kubernetes artefacts from corresponding source artefacts
-        cd $(workspaces.output.path)/repo/main
+        cd $(workspaces.output.path)
 
-        # Build YAMLs for queue manager; store in /yamls folder
-        mkdir -p yamls
+        export NAME=$(params.integration-name)
+        export NAMESPACE=$(params.ace-namespace)
+        export LICENSE=$(params.license)
+        export IMAGE_URL=$(params.image-url)
+        export VERSION=$(params.version)
 
-        # Copy simple YAMLs from output
-        cp config/yamls/mq01.yaml yamls/.
-        cp config/yamls/mq01-ingress.yaml yamls/.
-
-        # Generate qm.ini and MQSC YAMLs
-        kubectl create configmap mq01-ini -n mq01-dev --from-file=mq01.ini=config/qm.ini --dry-run=client -o yaml > yamls/mq01-ini.yaml
-        kubectl create configmap mq01-mqsc -n mq01-dev --from-file=user/mqsc/mq01.mqsc --dry-run=client -o yaml > yamls/mq01-mqsc.yaml
-
-        # We should probably copy mqs.ini into Docker image, as it will contain information relevant to the migrated queue manager
-        ls config/mqs.ini
-
-        # List YAMLs
-        ls -alt yamls/*.yaml
-        cat yamls/*.yaml
+        envsubst < integrationserver.yaml.tmpl > integrationserver.yaml
+        ls -l $(workspaces.output.path)
+        cat ./integrationserver.yaml
