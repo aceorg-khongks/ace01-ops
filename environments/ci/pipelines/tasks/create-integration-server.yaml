@@ -23,20 +23,7 @@ spec:
       type: string
     - name: ace-server-license
       description: ID of the license to use for the IntegrationServer
-      type: string
-    # --------------------------------------------------------------
-    # details of the Docker image that will be created to run the
-    #  integration server
-    # --------------------------------------------------------------
-    # - name: ace-server-base-image
-    #   description: |+
-    #     Docker image to use as a base for the server.
-    #     Example values for this can be found at
-    #     https://www.ibm.com/docs/en/app-connect/containers_cd?topic=obtaining-app-connect-enterprise-server-image-from-cloud-container-registry
-    #   type: string
-    # - name: bar-file-location
-    #   description: folder containing an integration.bar file to deploy
-    #   type: string
+      type: string    
     - name: integration-tag
       description: docker tag to use for the integration image
       type: string
@@ -46,14 +33,13 @@ spec:
     # --------------------------------------------------------------
     - name: cpu-limit
       type: string
-      default: "1"
+      default: "500m"
     - name: memory-limit
       type: string
-      default: "1Gi"
+      default: "500Mi"
     - name: replicas
       type: string
       default: "1"
-
     # --------------------------------------------------------------
     # optional arguments
     #   Configuration resources that can be added to
@@ -92,30 +78,6 @@ spec:
         #!/bin/sh
 
         set -e
-
-        # echo "creating base ACE imagestream"
-        # oc apply -f - <<EOF
-        # apiVersion: image.openshift.io/v1
-        # kind: ImageStream
-        # metadata:
-        #   name: ace-server-prod
-        #   namespace: $(params.ace-namespace)
-        # EOF
-
-        # echo "tagging with requested base image"
-        # oc tag \
-        #   -n $(params.ace-namespace) \
-        #   $(params.ace-server-base-image) \
-        #   ace-server-prod:latest-amd64
-
-        # echo "defining custom ACE imagestream"
-        # oc apply -f - <<EOF
-        # apiVersion: image.openshift.io/v1
-        # kind: ImageStream
-        # metadata:
-        #   name: $(params.integration-name)
-        #   namespace: $(params.ace-namespace)
-        # EOF
 
         echo "preparing configuration list"
         if [ -n "$(params.policies-configuration)" ]; then
