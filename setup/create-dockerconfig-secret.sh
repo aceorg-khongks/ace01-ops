@@ -19,6 +19,9 @@ stringData:
   config.json: |
     {
       "auths" : {
+        "image-registry.openshift-image-registry.svc:5000" : {
+          "auth": "${IMAGE_REGISTRY_SERVICE_AUTH_B64}"
+        },
         "image-registry.openshift-image-registry.svc.cluster.local:5000" : {
           "auth": "${IMAGE_REGISTRY_SERVICE_AUTH_B64}"
         },
