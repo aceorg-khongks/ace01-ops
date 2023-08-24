@@ -81,6 +81,8 @@ spec:
 
         cd $(workspaces.output.path)
 
+        ls -l
+
         echo "preparing configuration list"
         if [ -n "$(params.policies-configuration)" ]; then
           POLICIES_CONFIG="- $(params.policies-configuration)"
