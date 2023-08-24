@@ -208,6 +208,14 @@ spec:
     - name: target-build-image
       default: "quay.io/kskhong/ace01:1.0.0"
 
+    
+    - name: git-user-name
+      type: string
+    - name: git-user-email
+      type: string
+    - name: git-script
+      type: string
+
     # ########################################################
 
   tasks:
@@ -430,7 +438,6 @@ spec:
         - name: output
           workspace: shared-workspace
 
-
     - name: policies
       taskRef:
         kind: Task
@@ -515,7 +522,6 @@ spec:
         - name: output
           workspace: shared-workspace
 
-
     - name: truststore
       taskRef:
         kind: Task
@@ -535,7 +541,6 @@ spec:
         - name: output
           workspace: shared-workspace
 
-    # --------------------------------------------------------
 
     - name: clone-ops
       taskRef:
@@ -550,7 +555,7 @@ spec:
         - name: output
           workspace: shared-workspace
 
-  finally:
+    # --------------------------------------------------------
 
     - name: integration-server
       taskRef:
@@ -597,6 +602,13 @@ spec:
           value: "$(params.serverconf-name)"
         - name: truststore-configuration
           value: "$(params.truststore-name)"
+      runAfter:
+        - clone-ops
+        - data-source
+        - policies
+        - setdbparms
+        - serverconf
+        - truststore
       when:
         # --------------------------------------------------------------
         #  Don't run if the preceding tasks have failed
@@ -608,3 +620,21 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
+
+  finally:
+
+    - name: push-gitops
+      runAfter:
+        - integration-server
+      taskRef:
+        name: git-cli
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+      - name: GIT_USER_NAME
+        value: $(params.git-user-name)
+      - name: GIT_USER_EMAIL
+        value: $(params.git-user-email)
+      - name: GIT_SCRIPT
+        value: $(params.git-script)

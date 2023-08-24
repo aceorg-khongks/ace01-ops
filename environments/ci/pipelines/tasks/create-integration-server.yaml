@@ -140,3 +140,5 @@ spec:
 
         ls -l
         cat integrationserver.yaml
+
+        mv integrationserver.yaml ./environments/dev/ace01
