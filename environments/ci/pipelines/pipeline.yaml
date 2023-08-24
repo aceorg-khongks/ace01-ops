@@ -208,7 +208,7 @@ spec:
     - name: target-build-image
       default: "quay.io/kskhong/ace01:1.0.0"
 
-    
+
     - name: git-user-name
       type: string
     - name: git-user-email
@@ -541,7 +541,6 @@ spec:
         - name: output
           workspace: shared-workspace
 
-
     - name: clone-ops
       taskRef:
         kind: Task
@@ -609,6 +608,15 @@ spec:
         - setdbparms
         - serverconf
         - truststore
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+
+  finally:
+
+    - name: push-gitops
+      taskRef:
+        name: git-cli
       when:
         # --------------------------------------------------------------
         #  Don't run if the preceding tasks have failed
@@ -617,17 +625,6 @@ spec:
           operator: notin
           values:
             - "Failed"
-      workspaces:
-        - name: output
-          workspace: shared-workspace
-
-  finally:
-
-    - name: push-gitops
-      runAfter:
-        - integration-server
-      taskRef:
-        name: git-cli
       workspaces:
         - name: output
           workspace: shared-workspace
