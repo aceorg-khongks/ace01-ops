@@ -198,7 +198,8 @@ spec:
     - name: app-connect-enterprise-license
       default: "L-LFMR-BTD75V"
     - name: app-connect-enterprise-base-image
-      default: "cp.icr.io/cp/appc/ace-server-prod@sha256:473bbea96e65025c11c91014ac8dd72641212bd2f5f35d661dca7b3242f4155c"
+      default: image-registry.openshift-image-registry.svc:5000/ace01-ci/ace-server-prod
+      # default: "cp.icr.io/cp/appc/ace-server-prod@sha256:473bbea96e65025c11c91014ac8dd72641212bd2f5f35d661dca7b3242f4155c"
     - name: target-build-image
       default: "quay.io/kskhong/ace01:1.0.0"
 
@@ -285,6 +286,8 @@ spec:
         kind: Task
         name: buildah
       params:
+        - name: BASE_IMAGE
+          value: "$(params.app-connect-enterprise-base-image)"
         - name: IMAGE
           value: "$(params.target-build-image)"
         - name: DOCKERFILE

@@ -79,6 +79,8 @@ spec:
 
         set -e
 
+        cd $(workspaces.output.path)
+
         echo "preparing configuration list"
         if [ -n "$(params.policies-configuration)" ]; then
           POLICIES_CONFIG="- $(params.policies-configuration)"
@@ -133,3 +135,6 @@ spec:
           router:
             timeout: 120s
         EOF
+
+        ls -l
+        cat integrationserver.yaml

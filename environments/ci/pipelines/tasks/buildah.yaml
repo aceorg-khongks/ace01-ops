@@ -22,6 +22,8 @@ spec:
     container registry.
 
   params:
+  - name: BASE_IMAGE
+    description: Reference of the base image passed into the Dockerfile
   - name: IMAGE
     description: Reference of the image buildah will produce.
   - name: STORAGE_DRIVER
