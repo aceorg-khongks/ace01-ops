@@ -537,7 +537,20 @@ spec:
 
     # --------------------------------------------------------
 
-  #finally:
+    - name: clone-ops
+      taskRef:
+        kind: Task
+        name: git-clone
+      params:
+        - name: url
+          value: "$(params.gitops-repository)"
+      runAfter:
+        - build-and-push-image
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+
+  finally:
 
     - name: integration-server
       taskRef:
@@ -584,8 +597,6 @@ spec:
           value: "$(params.serverconf-name)"
         - name: truststore-configuration
           value: "$(params.truststore-name)"
-      runAfter:
-        - clone-ops
       when:
         # --------------------------------------------------------------
         #  Don't run if the preceding tasks have failed
@@ -597,22 +608,3 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
-
-    - name: clone-ops
-      taskRef:
-        kind: Task
-        name: git-clone
-      params:
-        - name: url
-          value: "$(params.gitops-repository)"
-      runAfter:
-        - data-source
-        - policies
-        - setdbparms
-        - serverconf
-        - truststore
-        - build-and-push-image
-      workspaces:
-        - name: output
-          workspace: shared-workspace
-
