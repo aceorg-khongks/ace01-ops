@@ -44,6 +44,11 @@ spec:
         deploy. If credentials are required, these should be available in
         a secret annotated with the git hostname.
 
+    - name: gitops-repository
+      type: string
+      description: |+
+        URL for the git repository containing the App Connect Ops project.
+
     - name: ace-project-name
       description: |+
         Name of the App Connect project to deploy.
@@ -590,3 +595,17 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
+
+    - name: clone-ops
+      taskRef:
+        kind: Task
+        name: git-clone
+      params:
+        - name: url
+          value: "$(params.gitops-repository)"
+      runAfter:
+        - jks
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+
