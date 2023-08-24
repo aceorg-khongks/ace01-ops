@@ -93,29 +93,66 @@ spec:
 
         set -e
 
-        # echo "creating base ACE imagestream"
-        # oc apply -f - <<EOF
-        # apiVersion: image.openshift.io/v1
-        # kind: ImageStream
-        # metadata:
-        #   name: ace-server-prod
-        #   namespace: $(params.ace-namespace)
-        # EOF
+        echo "creating base ACE imagestream"
+        oc apply -f - <<EOF
+        apiVersion: image.openshift.io/v1
+        kind: ImageStream
+        metadata:
+          name: ace-server-prod
+          namespace: $(params.ace-namespace)
+        EOF
 
-        # echo "tagging with requested base image"
-        # oc tag \
-        #   -n $(params.ace-namespace) \
-        #   $(params.ace-server-base-image) \
-        #   ace-server-prod:latest-amd64
+        echo "tagging with requested base image"
+        oc tag \
+          -n $(params.ace-namespace) \
+          $(params.ace-server-base-image) \
+          ace-server-prod:latest-amd64
 
-        # echo "defining custom ACE imagestream"
-        # oc apply -f - <<EOF
-        # apiVersion: image.openshift.io/v1
-        # kind: ImageStream
-        # metadata:
-        #   name: $(params.integration-name)
-        #   namespace: $(params.ace-namespace)
-        # EOF
+        echo "defining custom ACE imagestream"
+        oc apply -f - <<EOF
+        apiVersion: image.openshift.io/v1
+        kind: ImageStream
+        metadata:
+          name: $(params.integration-name)
+          namespace: $(params.ace-namespace)
+        EOF
+
+        echo "creating ACE image build configuration"
+        oc apply -f - <<EOF
+        apiVersion: build.openshift.io/v1
+        kind: BuildConfig
+        metadata:
+          name: $(params.integration-name)
+          namespace: $(params.ace-namespace)
+          labels:
+            name: $(params.integration-name)
+        spec:
+          triggers: []
+          source:
+            type: dockerfile
+            dockerfile: |
+              FROM ace-server-prod:latest-amd64
+              COPY integration.bar /home/aceuser/initial-config/bars/integration.bar
+          strategy:
+            type: Docker
+            dockerStrategy:
+              pullSecret:
+                name: ibm-entitlement-key
+              from:
+                kind: ImageStreamTag
+                name: "ace-server-prod:latest-amd64"
+                namespace: $(params.ace-namespace)
+          output:
+            to:
+              kind: ImageStreamTag
+              name: "$(params.integration-name):$(params.integration-tag)"
+              namespace: $(params.ace-namespace)
+        EOF
+
+        echo "starting custom image build"
+        cd $(params.bar-file-location)
+        ls -l
+        oc start-build $(params.integration-name) -n $(params.ace-namespace) --from-file ./integration.bar --wait=true
 
         echo "preparing configuration list"
         if [ -n "$(params.policies-configuration)" ]; then
@@ -135,7 +172,7 @@ spec:
         fi
 
         echo "creating integration server"
-        cat <<EOF > integrationserver.yaml
+        oc apply -f - <<EOF
         apiVersion: appconnect.ibm.com/v1beta1
         kind: IntegrationServer
         metadata:
@@ -150,12 +187,15 @@ spec:
                   limits:
                     cpu: $(params.cpu-limit)
                     memory: $(params.memory-limit)
+                  requests:
+                    cpu: $(params.cpu-limit)
+                    memory: $(params.memory-limit)
           configurations:
-            ${POLICIES_CONFIG}
-            ${SETDBPARMS_CONFIG}
-            ${DATASOURCE_CONFIG}
-            ${SERVERCONF_CONFIG}
-            ${TRUSTSTORE_CONFIG}
+            $POLICIES_CONFIG
+            $SETDBPARMS_CONFIG
+            $DATASOURCE_CONFIG
+            $SERVERCONF_CONFIG
+            $TRUSTSTORE_CONFIG
           adminServerSecure: true
           createDashboardUsers: true
           designerFlowsOperationMode: disabled
@@ -166,7 +206,7 @@ spec:
           license:
             accept: true
             license: $(params.ace-server-license)
-            use: CloudPakForIntegrationNonProductionFREE
+            use: CloudPakForIntegrationProduction
           replicas: $(params.replicas)
           router:
             timeout: 120s

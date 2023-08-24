@@ -534,7 +534,7 @@ spec:
     - name: integration-server
       taskRef:
         kind: Task
-        name: ace-create-integration-server-yaml-file
+        name: ace-create-integration-server
       params:
         # --------------------------------------------------------------
         # details of the IntegrationServer to create
