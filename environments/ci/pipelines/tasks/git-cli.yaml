@@ -3,7 +3,6 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: git-cli
-  namespace: ace01-ci
   labels:
     app.kubernetes.io/version: "0.4"
   annotations:
@@ -21,7 +20,7 @@ spec:
     after the git operation.
 
   workspaces:
-    - name: output
+    - name: source
       description: A workspace that contains the fetched git repository.
 
     - name: input
@@ -55,7 +54,8 @@ spec:
       description: |
         The base image for the task.
       type: string
-      default: docker.io/alpine/git:v2.26.2@sha256:23618034b0be9205d9cc0846eb711b12ba4c9b468efdd8a59aac1d7b1a23363f #tag: v2.26.2
+      # TODO: Deprecate use of root image.
+      default: cgr.dev/chainguard/git:root-2.39@sha256:7759f87050dd8bacabe61354d75ccd7f864d6b6f8ec42697db7159eccd491139
 
     - name: GIT_USER_NAME
       type: string
@@ -94,7 +94,7 @@ spec:
   steps:
     - name: git
       image: $(params.BASE_IMAGE)
-      workingDir: $(workspaces.output.path)
+      workingDir: $(workspaces.source.path)
       env:
       - name: HOME
         value: $(params.USER_HOME)
