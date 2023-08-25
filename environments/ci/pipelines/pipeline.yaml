@@ -18,6 +18,7 @@ spec:
   workspaces:
     - name: shared-workspace
     - name: dockerconfig-workspace
+    - name: basic-auth-workspace
 
   params:
     # ########################################################
@@ -629,7 +630,7 @@ spec:
         - name: output
           workspace: shared-workspace
         - name: basic-auth
-          workspace: basic-auth
+          workspace: basic-auth-workspace
       params:
       - name: GIT_USER_NAME
         value: $(params.git-user-name)
