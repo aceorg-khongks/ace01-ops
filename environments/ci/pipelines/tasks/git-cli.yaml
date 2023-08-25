@@ -94,7 +94,7 @@ spec:
   steps:
     - name: git
       image: $(params.BASE_IMAGE)
-      workingDir: $(workspaces.source.path)
+      workingDir: $(workspaces.output.path)
       env:
       - name: HOME
         value: $(params.USER_HOME)
