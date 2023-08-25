@@ -465,7 +465,6 @@ spec:
         - name: output
           workspace: shared-workspace
 
-
     - name: setdbparms
       taskRef:
         kind: Task
@@ -618,6 +617,14 @@ spec:
     - name: push-gitops
       taskRef:
         name: git-cli
+      when:
+        # --------------------------------------------------------------
+        #  Don't run if the preceding tasks have failed
+        # --------------------------------------------------------------
+        - input: "$(tasks.status)"
+          operator: notin
+          values:
+            - "Failed"
       workspaces:
         - name: source
           workspace: shared-workspace
