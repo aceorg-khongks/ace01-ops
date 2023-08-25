@@ -116,6 +116,8 @@ spec:
         #!/usr/bin/env sh
         set -eu
 
+        whoami
+
         if [ "${PARAM_VERBOSE}" = "true" ] ; then
           set -x
         fi
