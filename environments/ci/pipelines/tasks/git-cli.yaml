@@ -112,6 +112,8 @@ spec:
         value: $(workspaces.basic-auth.bound)
       - name: WORKSPACE_BASIC_AUTH_DIRECTORY_PATH
         value: $(workspaces.basic-auth.path)
+      securityContext:
+        runAsUser: 0
       script: |
         #!/usr/bin/env sh
         set -eu
