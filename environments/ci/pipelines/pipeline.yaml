@@ -628,6 +628,8 @@ spec:
       workspaces:
         - name: output
           workspace: shared-workspace
+        - name: basic-auth
+          workspace: basic-auth
       params:
       - name: GIT_USER_NAME
         value: $(params.git-user-name)
