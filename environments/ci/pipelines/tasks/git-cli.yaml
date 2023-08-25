@@ -20,7 +20,7 @@ spec:
     after the git operation.
 
   workspaces:
-    - name: source
+    - name: output
       description: A workspace that contains the fetched git repository.
 
     - name: input
@@ -94,7 +94,7 @@ spec:
   steps:
     - name: git
       image: $(params.BASE_IMAGE)
-      workingDir: $(workspaces.source.path)
+      workingDir: $(workspaces.output.path)
       env:
       - name: HOME
         value: $(params.USER_HOME)
