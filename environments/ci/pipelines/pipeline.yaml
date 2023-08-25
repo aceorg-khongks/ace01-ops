@@ -603,11 +603,11 @@ spec:
           value: "$(params.truststore-name)"
       runAfter:
         - clone-ops
-        - data-source
-        - policies
-        - setdbparms
-        - serverconf
-        - truststore
+        # - data-source
+        # - policies
+        # - setdbparms
+        # - serverconf
+        # - truststore
       workspaces:
         - name: output
           workspace: shared-workspace
