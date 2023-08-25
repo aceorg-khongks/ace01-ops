@@ -627,7 +627,7 @@ spec:
           values:
             - "Failed"
       workspaces:
-        - name: output
+        - name: source
           workspace: shared-workspace
         - name: basic-auth
           workspace: basic-auth-workspace
