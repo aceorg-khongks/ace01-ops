@@ -2,12 +2,12 @@ apiVersion: appconnect.ibm.com/v1beta1
 kind: IntegrationServer
 metadata:
   name: books-is
-  namespace: ace01-ci
+  namespace: ace01-dev
 spec:
   pod:
     containers:
       runtime:
-        image: image-registry.openshift-image-registry.svc:5000/ace01-ci/books-is:ea6db73cb9f71791f8fe7ec89f89a7e56ca231aa
+        image: image-registry.openshift-image-registry.svc:5000/ace01-dev/books-is:ea6db73cb9f71791f8fe7ec89f89a7e56ca231aa
         resources:
           limits:
             cpu: 500m
