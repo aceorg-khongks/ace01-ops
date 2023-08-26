@@ -303,7 +303,7 @@ spec:
         - name: BASE_IMAGE
           value: "$(params.app-connect-enterprise-base-image)"
         - name: IMAGE
-          value: image-registry.openshift-image-registry.svc:5000/$(params.ace-namespace)/$(params.integration-name):$(params.integration-tag)
+          value: image-registry.openshift-image-registry.svc:5000/$(params.ace-namespace)/$(params.integration-server-name):$(tasks.clone-source.results.commit)
           # value: "$(params.target-build-image)"
         - name: DOCKERFILE
           value: ./Dockerfile
