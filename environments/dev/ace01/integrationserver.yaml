@@ -7,17 +7,12 @@ spec:
   pod:
     containers:
       runtime:
-        image: image-registry.openshift-image-registry.svc:5000/ace01-dev/books-is:ea6db73cb9f71791f8fe7ec89f89a7e56ca231aa
+        image: image-registry.openshift-image-registry.svc:5000/ace01-dev/books-is:519c864a42dc806ddc6e8b55743f19e740818436
         resources:
           limits:
             cpu: 500m
             memory: 500Mi
-  configurations:
-    
-    
-    
-    
-    
+  configurations: []
   adminServerSecure: true
   createDashboardUsers: true
   designerFlowsOperationMode: disabled
