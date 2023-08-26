@@ -1,0 +1,29 @@
+apiVersion: appconnect.ibm.com/v1beta1
+kind: IntegrationServer
+metadata:
+  name: books-is
+  namespace: ace01-dev
+spec:
+  pod:
+    containers:
+      runtime:
+        image: image-registry.openshift-image-registry.svc:5000/ace01-dev/books-is:519c864a42dc806ddc6e8b55743f19e740818436
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+  configurations: []
+  adminServerSecure: true
+  createDashboardUsers: true
+  designerFlowsOperationMode: disabled
+  service:
+    endpointType: http
+  version: '12.0.9.0-r1'
+  enableMetrics: false
+  license:
+    accept: true
+    license: L-LFMR-BTD75V
+    use: CloudPakForIntegrationNonProductionFREE
+  replicas: 1
+  router:
+    timeout: 120s
