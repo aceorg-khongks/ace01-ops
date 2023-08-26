@@ -303,7 +303,8 @@ spec:
         - name: BASE_IMAGE
           value: "$(params.app-connect-enterprise-base-image)"
         - name: IMAGE
-          value: "$(params.target-build-image)"
+          value: image-registry.openshift-image-registry.svc:5000/$(params.ace-namespace)/$(params.integration-name):$(params.integration-tag)
+          # value: "$(params.target-build-image)"
         - name: DOCKERFILE
           value: ./Dockerfile
         - name: TLSVERIFY

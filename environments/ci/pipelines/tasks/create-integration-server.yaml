@@ -84,21 +84,35 @@ spec:
         ls -l
 
         echo "preparing configuration list"
+        CONFIG=""
         if [ -n "$(params.policies-configuration)" ]; then
           POLICIES_CONFIG="- $(params.policies-configuration)"
+          CONFIG="${CONFIG}$(params.policies-configuration),"
         fi
         if [ -n "$(params.setdbparms-configuration)" ]; then
           SETDBPARMS_CONFIG="- $(params.setdbparms-configuration)"
+          CONFIG="${CONFIG}$(params.policies-configuration),"
         fi
         if [ -n "$(params.datasource-configuration)" ]; then
           DATASOURCE_CONFIG="- $(params.datasource-configuration)"
+          CONFIG="${CONFIG}$(params.policies-configuration),"
         fi
         if [ -n "$(params.serverconf-configuration)" ]; then
           SERVERCONF_CONFIG="- $(params.serverconf-configuration)"
+          CONFIG="${CONFIG}$(params.policies-configuration),"
         fi
         if [ -n "$(params.truststore-configuration)" ]; then
           TRUSTSTORE_CONFIG="- $(params.truststore-configuration)"
+          CONFIG="${CONFIG}$(params.policies-configuration),"
         fi
+
+        if [ -n "${CONFIG}" ]; then
+          if [ "${CONFIG: -1}" = "," ]; then
+            # Remove the last character (comma)
+            CONFIG="${CONFIG%,}"
+          fi
+        fi
+        CONFIG="[${CONFIG}]"
 
         echo "creating integration server"
         cat <<EOF > integrationserver.yaml
@@ -116,12 +130,7 @@ spec:
                   limits:
                     cpu: $(params.cpu-limit)
                     memory: $(params.memory-limit)
-          configurations:
-            ${POLICIES_CONFIG}
-            ${SETDBPARMS_CONFIG}
-            ${DATASOURCE_CONFIG}
-            ${SERVERCONF_CONFIG}
-            ${TRUSTSTORE_CONFIG}
+          configurations: ${CONFIG}
           adminServerSecure: true
           createDashboardUsers: true
           designerFlowsOperationMode: disabled
