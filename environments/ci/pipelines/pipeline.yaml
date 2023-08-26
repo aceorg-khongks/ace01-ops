@@ -588,8 +588,8 @@ spec:
         #   value: "$(tasks.bar-file.results.folder)"
         - name: replicas
           value: "$(params.integration-server-replicas)"
-        # - name: integration-tag
-        #   value: "$(tasks.clone-source.results.commit)"
+        - name: integration-tag
+          value: "$(tasks.clone-source.results.commit)"
         # - name: target-build-image
         #   value: "$(params.target-build-image)"
         # --------------------------------------------------------------
