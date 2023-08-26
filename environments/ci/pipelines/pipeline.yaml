@@ -548,6 +548,8 @@ spec:
       params:
         - name: url
           value: "$(params.gitops-repository)"
+        - name: subdirectory
+          value: "gitops"
       runAfter:
         - build-and-push-image
       workspaces:

@@ -141,4 +141,4 @@ spec:
         ls -l
         cat integrationserver.yaml
 
-        mv integrationserver.yaml ./environments/dev/ace01
+        mv integrationserver.yaml ./gitops/environments/dev/ace01
