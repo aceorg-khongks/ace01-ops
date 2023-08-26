@@ -7,7 +7,7 @@ spec:
   pod:
     containers:
       runtime:
-        image: image-registry.openshift-image-registry.svc:5000/ace01-dev/books-is:519c864a42dc806ddc6e8b55743f19e740818436
+        image: image-registry.openshift-image-registry.svc:5000/ace01-dev/books-is:9c08dc66cbcf239cc906a750720ef7f18f00698b
         resources:
           limits:
             cpu: 500m
@@ -24,6 +24,6 @@ spec:
     accept: true
     license: L-LFMR-BTD75V
     use: CloudPakForIntegrationNonProductionFREE
-  replicas: 1
+  replicas: 2
   router:
     timeout: 120s
