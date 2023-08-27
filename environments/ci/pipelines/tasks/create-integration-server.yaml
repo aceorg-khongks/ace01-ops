@@ -121,6 +121,8 @@ spec:
         metadata:
           name: $(params.integration-name)
           namespace: $(params.ace-namespace)
+        annotations
+          taskrun: $(hostname -f)
         spec:
           pod:
             containers:

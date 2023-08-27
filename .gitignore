@@ -1,3 +1,4 @@
 **/.DS_Store
 **/config.json
-setup/dockerconfig-secret.yaml
+**/dockerconfig-secret.yaml
+**/gitcredentials-secret.yaml
