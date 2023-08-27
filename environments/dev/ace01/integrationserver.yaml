@@ -4,7 +4,7 @@ metadata:
   name: books-is
   namespace: ace01-dev
   annotations:
-    pipelinerun: ace-pipeline-9nb7p
+    pipelinerun: ace-pipeline-8xf8r
 spec:
   pod:
     containers:
