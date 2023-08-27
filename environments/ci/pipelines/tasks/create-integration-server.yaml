@@ -84,7 +84,7 @@ spec:
         ls -l
         ## ace-pipeline-2bj7j-integration-server-pod
         temp=$(hostname -f)
-        pipelinerun=echo ${temp//-integration-server-pod}
+        pipelinerun=$(echo ${temp//-integration-server-pod})
 
         echo "preparing configuration list"
         CONFIG=""
