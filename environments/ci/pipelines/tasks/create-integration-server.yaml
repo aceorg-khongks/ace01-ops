@@ -124,8 +124,8 @@ spec:
         metadata:
           name: $(params.integration-name)
           namespace: $(params.ace-namespace)
-        annotations:
-          pipelinerun: ${pipelinerun}
+          annotations:
+            pipelinerun: ${pipelinerun}
         spec:
           pod:
             containers:
