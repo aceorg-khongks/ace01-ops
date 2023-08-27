@@ -82,7 +82,6 @@ spec:
         cd $(workspaces.output.path)
 
         ls -l
-
         ## ace-pipeline-2bj7j-integration-server-pod
         temp=$(hostname -f)
         pipelinerun=echo ${temp//-integration-server-pod}
