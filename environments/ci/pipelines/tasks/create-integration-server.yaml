@@ -83,6 +83,10 @@ spec:
 
         ls -l
 
+        ## ace-pipeline-2bj7j-integration-server-pod
+        temp=$(hostname -f)
+        pipelinerun=echo ${temp//-integration-server-pod}
+
         echo "preparing configuration list"
         CONFIG=""
         if [ -n "$(params.policies-configuration)" ]; then
@@ -121,8 +125,8 @@ spec:
         metadata:
           name: $(params.integration-name)
           namespace: $(params.ace-namespace)
-        annotations
-          taskrun: $(hostname -f)
+        annotations:
+          pipelinerun: ${pipelinerun}
         spec:
           pod:
             containers:
