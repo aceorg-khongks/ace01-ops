@@ -4,7 +4,7 @@ metadata:
   name: books-is
   namespace: ace01-dev
 annotations
-  taskrun: ace-pipeline-2l8jk-integration-server-pod
+  taskrun: ace-pipeline-2bj7j-integration-server-pod
 spec:
   pod:
     containers:
