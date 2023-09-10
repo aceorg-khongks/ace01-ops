@@ -296,7 +296,7 @@ Let's use some YAML in `ace01-ops` to define two namespaces in our cluster:
 Issue the following command:
 
 ```bash
-oc apply -f setup/namespaces.yaml
+oc apply -f setup/namespaces/namespaces.yaml
 ```
 
 which will confirm the following namespaces are created in the cluster:
@@ -397,39 +397,8 @@ The `setup` folder which contains the YAML files needed to setup the demo. It co
 │   └── tekton-rolebinding.yaml
 └── secrets
     ├── create-dockerconfig-secret.sh
-    ├── create-gitcredentials-secret.sh
+    └── create-gitcredentials-secret.sh
 ```
-
----
-
-### Create namespace
-
-Issue the following command to create the namespaces.
-
-```bash
-oc apply -f setup/namespaces/namespaces.yaml
-```
-
-Use the following command to show these namespaces in the cluster
-
-```bash
-oc get namespaces ace01-ci ace01-dev
-```
-
-which will shows these namespaces and their age, for example:
-
-```bash
-NAME        STATUS   AGE
-ace01-ci    Active   26d
-ace01-dev   Active   26d
-```
-
-During this tutorial, we'll see how:
-
-If you'd like to understand a little bit more about how the namespaces were created, 
-
-- the `ace01-ci` namespace is used to store specific Kubernetes resources to build, package, version and test `ace01`.
-- the `ace01-dev` namespace is used to store specific Kubernetes resources relating to a running queue manager, `ace01`.
 
 ---
 
@@ -452,7 +421,7 @@ subscription.operators.coreos.com/openshift-gitops-operator created
 Explore the subscription using the following command:
 
 ```bash
-cat setup/argocd-operator-sub.yaml
+cat setup/operators/argocd-operator-sub.yaml
 ```
 
 which details the subscription:
@@ -571,9 +540,12 @@ Annotations:  <none>
 PolicyRule:
   Resources                              Non-Resource URLs  Resource Names  Verbs
   ---------                              -----------------  --------------  -----
+  configmaps                             []                 []              [*]
   secrets                                []                 []              [*]
+  serviceaccounts                        []                 []              [*]
   services                               []                 []              [*]
   configurations.appconnect.ibm.com      []                 []              [*]
+  dashboards.appconnect.ibm.com          []                 []              [*]
   integrationservers.appconnect.ibm.com  []                 []              [*]
 ```
 
@@ -873,7 +845,7 @@ cd setup/secrets
 Issue the following command to create a `serviceaccount` for Pipeline (Tekton):
 
 ```bash
-oc apply -f setup/permissions/ace-pipeline-serviceaccount.yaml
+oc apply -f setup/permissions/ace-pipeline-deployer-serviceaccount.yaml
 ```
 
 Issue the following command to create a `role` that allows the `serviceaccount` to manipulate `imagestreams`, `buildconfig`, etc.
@@ -885,7 +857,7 @@ oc apply -f setup/permissions/ace-pipeline-deployer-role.yaml
 Finally, issue the following command to create a `rolebinding` that links the `serviceaccount` to its `role`:
 
 ```bash
-oc apply -f setup/permissions/ace-pipeline-rolebinding.yaml
+oc apply -f setup/permissions/ace-pipeline-deployer-rolebinding.yaml
 ```
 
 ---
@@ -948,7 +920,7 @@ Finally, we're going to create an ArgoCD application to manage the ACE integrati
 `ace01-ops`. Every time this repository is updated, our ArgoCD application will ensure that the latest version of `ace01` is deployed to the cluster.
 
 
-## An ArgoCD application to manage `ace01-dev`
+## Create an ArgoCD application to manage `ace01-dev`
 
 Finally, we're going to create an ArgoCD application to manage the ACE integration server `ace01`. The YAMLs for `ace01` will be created by its Tekton pipeline in
 `ace01-ops`. Every time this repository is updated, our ArgoCD application will ensure that the latest version of `ace01` is deployed to the cluster.
@@ -958,7 +930,7 @@ Let's have a quick look at our ArgoCD application.
 Issue the following command:
 
 ```bash
-cat environments/dev/argocd/ace01.yaml
+cat setup/argocd/dev/ace01.yaml.tmpl
 ```
 
 which will show its YAML:
@@ -1014,7 +986,7 @@ command to replace $GITORG with your GitHub organization.
 Issue the following command:
 
 ```bash
-envsubst < environments/dev/argocd/ace01.yaml.tmpl >> environments/dev/argocd/ace01.yaml
+envsubst < setup/argocd/dev/ace01.yaml.tmpl >> environments/dev/argocd/ace01.yaml
 oc apply -f environments/dev/argocd/ace01.yaml
 ```
 
@@ -1040,7 +1012,7 @@ oc get route openshift-gitops-server -n openshift-gitops -o jsonpath='{"https://
 which will return a URL similar to this:
 
 ```bash
-https://openshift-gitops-server-openshift-gitops.apps.ocp-3100015379-l0ri.cloud.techzone.ibm.com/
+https://openshift-gitops-server-openshift-gitops.apps.<domainName>
 ```
 
 We will use this URL to log into the ArgoCD admin console to view our deployments.
