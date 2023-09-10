@@ -369,14 +369,12 @@ The `setup` folder which contains the YAML files needed to setup the demo. It co
 
 
 ```bash
-.
+setup
 ├── argocd
 │   ├── ci
-│   │   ├── ci.yaml.tmpl
-│   │   └── create-yaml.sh
+│   │   └── ci.yaml.tmpl
 │   └── dev
-│       ├── ace01.yaml.tmpl
-│       └── create-yaml.sh
+│       └── ace01.yaml.tmpl
 ├── catalogsources
 │   └── catalog-sources.yaml
 ├── imagestreams
@@ -883,7 +881,7 @@ application.argoproj.io/ace01-argo created
 
 ## Create a ImageStream for IBM Certified Container image
 
-Issue the following command to create an imagestream of the IBM Certified image.
+Issue the following command to create an imagestream of the IBM Certified image. To find the `ace-server-prod` image, see the [page](https://www.ibm.com/docs/en/app-connect/containers_cd?topic=obtaining-app-connect-enterprise-server-image-from-cloud-container-registry) in the documentation
 
 ```bash
 export ACE_IMAGE=cp.icr.io/cp/appc/ace-server-prod@sha256:246828d9f89c4ed3a6719cd3e4b71b1dec382f848c9bf9c28156f78fa05bc4e7
@@ -1113,6 +1111,24 @@ Notice how the ArgoCD application `ace01-argo` is monitoring the
 
 In the next step we will run the Tekton pipeline that populates this repository
 folder with the YAMLs for the `ace01` queue manager.
+
+---
+
+## Verify ACE dashboard installed by ArgoCD
+
+Issue this command to the the endpoint of the ACE dashboard
+```bash
+oc get dashboard -n ace01-dev -ojson | jq -r '.items[0].status.adminUiUrl'
+```
+
+Result:
+```bash
+https://dashboard-ui-ace01-dev.apps.<domainName>
+```
+
+Use the browser, go to the URL.
+
+![Alt text](./xdocs/images/diagram17.png)
 
 ---
 
