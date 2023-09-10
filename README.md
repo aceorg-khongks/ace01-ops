@@ -358,7 +358,7 @@ The `setup` folder which contains the YAML files needed to setup the demo. It co
 | `argocd/ci` | Contains script and template to create  ArgoCD application to deploy Tekton Pipelines & Tasks. |
 | `argocd/dev` | Contains script and template to create ArgoCD application to deploy App Connect dashboard and integration server. |
 | `catalogsources/catalog-sources.yaml` | Used to create CatalogSource |
-| `imagestreams/imagestream.yaml` | used to create a ACE Docker image `cp.icr.io/cp/appc/ace-server-prod` in OpenShift image registry so that you don't have to pull from external image registry. |
+| `imagestreams/imagestream.yaml.tmpl` | used to create a ACE Docker image `cp.icr.io/cp/appc/ace-server-prod` in OpenShift image registry so that you don't have to pull from external image registry. |
 | `namespaces/namespaces.yaml` | used to create two namespaces `ace01-ci` and `ace01-dev` |
 | `operators` | folder container YAML files to deploy the operators `ibm-appconnect`, `openshift-gitops-operator` and `openshift-pipelines-operator` (Tekton). |
 | `permissions` |  |
@@ -380,7 +380,7 @@ The `setup` folder which contains the YAML files needed to setup the demo. It co
 ├── catalogsources
 │   └── catalog-sources.yaml
 ├── imagestreams
-│   └── imagestream.yaml
+│   └── imagestream.yaml.tmpl
 ├── namespaces
 │   └── namespaces.yaml
 ├── operators
@@ -862,11 +862,32 @@ oc apply -f setup/permissions/ace-pipeline-deployer-rolebinding.yaml
 
 ---
 
-## Create a imagestream for IBM Certified Container image
+## Create an ArgoCD application to manage `ace01-ci` 
+
+Let's deploy this ArgoCD application thhat manages the pipeline to the cluster. We use the `envsubst` command to replace $GITORG with your GitHub organization.
+
+Issue the following command:
+
+```bash
+envsubst < setup/argocd/ci/ci.yaml.tmpl > environments/ci/argocd/ci.yaml
+oc apply -f environments/ci/argocd/ci.yaml
+```
+
+which will complete with:
+
+```bash
+application.argoproj.io/ace01-argo created
+```
+
+---
+
+## Create a ImageStream for IBM Certified Container image
 
 Issue the following command to create an imagestream of the IBM Certified image.
 
 ```bash
+export ACE_IMAGE=cp.icr.io/cp/appc/ace-server-prod@sha256:246828d9f89c4ed3a6719cd3e4b71b1dec382f848c9bf9c28156f78fa05bc4e7
+envsubst < setup/imagestreams/imagestream.yaml.tmpl > setup/imagestreams/imagestream.yaml
 oc apply -f setup/imagestreams/imagestream.yaml
 ```
 
@@ -897,6 +918,59 @@ spec:
         type: Source   
 ```
 
+---
+
+##  Update ACE Dashboard YAML file (if needed)
+
+Issue the following command to create an a YAML file for ACE Dashboard. You need to find out the `FILE_STORAGECLASS` first using `oc get sc`.
+
+```bash
+export ACE_LICENSE=L-LFMR-BTD75V
+export ACE_VERSION=12.0.9.0-r1
+export FILE_STORAGECLASS=ocs-storagecluster-cephfs
+envsubst < setup/argocd/dev/dashboard.yaml.tmpl > environments/dev/ace01/dashboard.yaml
+```
+
+Review the YAML file
+
+```bash
+cat environments/dev/ace01/dashboard.yaml
+```
+
+```yaml
+apiVersion: appconnect.ibm.com/v1beta1
+kind: Dashboard
+metadata:
+  name: dashboard
+  namespace: ace01-dev
+spec:
+  license:
+    accept: true
+    license: L-LFMR-BTD75V
+    use: AppConnectEnterpriseNonProductionFREE
+  logFormat: basic
+  logLevel: info
+  pod:
+    containers:
+      content-server:
+        resources:
+          limits:
+            cpu: 250m
+      control-ui:
+        resources:
+          limits:
+            cpu: 250m
+            memory: 250Mi
+  replicas: 1
+  storage:
+    class: ocs-storagecluster-cephfs
+    size: 5Gi
+    type: persistent-claim
+  useCommonServices: false
+  version: 12.0.9.0-r1
+```
+
+
 
 <!-- ## Allow the `serviceaccount` of ibm
 
@@ -916,14 +990,12 @@ oc policy add-role-to-user system:image-puller system:serviceaccount:ace01-dev:a
 
 ## An ArgoCD application to manage `ace01-ci`
 
-Finally, we're going to create an ArgoCD application to manage the ACE integration server `ace01`. The YAMLs for `ace01` will be created by its Tekton pipeline in
-`ace01-ops`. Every time this repository is updated, our ArgoCD application will ensure that the latest version of `ace01` is deployed to the cluster.
+Finally, we're going to create an ArgoCD application to manage the ACE integration server `ace01`. The YAMLs for `ace01` will be created by its Tekton pipeline in `ace01-ops`. Every time this repository is updated, our ArgoCD application will ensure that the latest version of `ace01` is deployed to the cluster.
 
 
 ## Create an ArgoCD application to manage `ace01-dev`
 
-Finally, we're going to create an ArgoCD application to manage the ACE integration server `ace01`. The YAMLs for `ace01` will be created by its Tekton pipeline in
-`ace01-ops`. Every time this repository is updated, our ArgoCD application will ensure that the latest version of `ace01` is deployed to the cluster.
+Finally, we're going to create an ArgoCD application to manage the ACE integration server `ace01`. The YAMLs for `ace01` will be created by its Tekton pipeline in `ace01-ops`. Every time this repository is updated, our ArgoCD application will ensure that the latest version of `ace01` is deployed to the cluster.
 
 Let's have a quick look at our ArgoCD application.
 
@@ -978,15 +1050,14 @@ See how:
   - `targetRevision: main` identifies the branch within the repository
   - `path: environments/dev/ace01/` identifies the folder within the repository
 
-## Deploy `ac01-argo` to the cluster
+## Deploy `ace01-argo` to the cluster
 
-Let's deploy this ArgoCD application to the cluster. We use the `envsubst`
-command to replace $GITORG with your GitHub organization.
+Let's deploy this ArgoCD application to the cluster. We use the `envsubst` command to replace $GITORG with your GitHub organization.
 
 Issue the following command:
 
 ```bash
-envsubst < setup/argocd/dev/ace01.yaml.tmpl >> environments/dev/argocd/ace01.yaml
+envsubst < setup/argocd/dev/ace01.yaml.tmpl > environments/dev/argocd/ace01.yaml
 oc apply -f environments/dev/argocd/ace01.yaml
 ```
 
@@ -1000,8 +1071,7 @@ We now have an ArgoCD application monitoring our repository.
 
 ## View `ace01-argo` in ArgoCD UI
 
-We can use the ArgoCD UI to look at the `ace01-argo` application and the
-resources it is managing:
+We can use the ArgoCD UI to look at the `ace01-argo` application and the resources it is managing:
 
 Issue the following command to identify the URL for the ArgoCD login page:
 
@@ -1017,8 +1087,7 @@ https://openshift-gitops-server-openshift-gitops.apps.<domainName>
 
 We will use this URL to log into the ArgoCD admin console to view our deployments.
 
-Issue the following command to determine the ArgoCD `password` for the `admin`
-user:
+Issue the following command to determine the ArgoCD `password` for the `admin` user:
 
 ```bash
 oc extract secret/openshift-gitops-cluster -n openshift-gitops --keys="admin.password" --to=-

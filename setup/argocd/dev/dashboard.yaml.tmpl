@@ -6,7 +6,7 @@ metadata:
 spec:
   license:
     accept: true
-    license: L-LFMR-BTD75V
+    license: ${ACE_LICENSE}
     use: AppConnectEnterpriseNonProductionFREE
   logFormat: basic
   logLevel: info
@@ -23,8 +23,8 @@ spec:
             memory: 250Mi
   replicas: 1
   storage:
-    class: ocs-storagecluster-cephfs
+    class: ${FILE_STORAGECLASS}
     size: 5Gi
     type: persistent-claim
   useCommonServices: false
-  version: 12.0.9.0-r1
+  version: ${ACE_VERSION}

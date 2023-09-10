@@ -2,3 +2,4 @@
 **/config.json
 **/dockerconfig-secret.yaml
 **/gitcredentials-secret.yaml
+**/imagestream.yaml
