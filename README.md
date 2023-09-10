@@ -33,16 +33,10 @@ The following diagram shows a CICD pipeline for ACE:
 
 Notice:
 
-- The git repository `ace01-src` holds the source development artifacts for a
-  queue manage `ace01`.
-- A Tekton pipeline uses the `ace01-src` repository to build, package, test,
-  version and deliver resources that define the `ace01` queue manager.
-- If the pipeline is successful, then the YAMLs that define `ace01` are stored in
-  the operational repository `ace01-ops` and the container image for `ace01` is
-  stored in an image registry.
-- Shortly after the changes are committed to the git repository, an ArgoCD
-  application detects the updated YAMLs. It applies them to the cluster to create or
-  update a running queue manager, `ace01`.
+- The git repository `ace01-src` holds the source code for App Connect integration server such as message flows, ESQL, java code, configurations.
+- A Tekton pipeline uses the `ace01-src` repository to build, package, test, version and deliver resources that define the `ace01` integration server.
+- If the pipeline is successful, then the YAMLs that define `ace01` are stored in the operational repository `ace01-ops` and the container image for `ace01` is stored in an image registry.
+- Shortly after the changes are committed to the git repository, an ArgoCD application detects the updated YAMLs. It applies them to the cluster to create or update a running queue manager, `ace01`.
 
 This tutorial will walk you through the process of setting up this
 configuration:
@@ -51,23 +45,19 @@ configuration:
 - Step 2: Move to [these
   instructions](https://github.com/ace-modernization-demo/ace01-src#readme) to create the
   `ace01-src` repository, run a Tekton pipeline to populate the `ace01-ops`
-  repository, and interact with the new or updated queue manager `ace01`.
+  repository, and interact with the new or updated integration server `ace01`.
 
 ---
 
-## Install Kubernetes
+## Prerequisites
 
-At the moment, this Tutorial requires OpenShift. It will be updated to support
-Minikube.
+- OpenShift Container Platform v4.10 or v4.12
 
----
+## Tools needed
 
-## Install Kubernetes CLI
-
-To interact with your cluster from your local machine, you will need to use the
-`kubectl` or `oc` command line interface.
-
-Add instructions to install `kubectl` or `oc` CLI.
+- OpenShift CLI - instructions [here](https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html)
+- jq CLI JSON processor - instructions [here](https://jqlang.github.io/jq/)
+- Tekton CLI - instructions [here](https://tekton.dev/docs/cli/)
 
 ---
 
@@ -102,65 +92,59 @@ This tutorial requires you to create the `ace01-src` and `ace01-ops` repositorie
 It's a good idea to create them in a separate organization because it makes it
 easy to collaborate with your colleagues later on.
 
-<br>
-
 Click on the following URL: [https://github.com/settings/organizations](https://github.com/settings/organizations)
 to create a new organization:
 
-
-<br> You will see a list of your existing GitHub organizations:
+You will see a list of your existing GitHub organizations:
 
 <img src="./xdocs/images/diagram6.png" alt="drawing" width="800"/>
 
 You're going to create a new organization for this tutorial.
 
-<br> Click on `New organization`:
+Click on `New organization`:
 
-<br> This shows you the list of available plans:
+This shows you the list of available plans:
 
 <img src="./xdocs/images/diagram7.png" alt="drawing" width="800"/>
 
 The `Free` plan is sufficient for this tutorial.
 
-<br> Click on `Create a free organization`:
+Click on `Create a free organization`:
 
-<br> This shows you the properties for the new organization.
+This shows you the properties for the new organization.
 
 <img src="./xdocs/images/diagram8.png" alt="drawing" width="800"/>
 
-<br> Complete the details for your new organization.
+Complete the details for your new organization.
 
 * Specify `Organization account name` of the form `aceorg-xxxxx` where `xxxxx` is
   your GitHub user name.
 * Specify `Contact mail` e.g. `khongks@example.com`
 * Select `My personal account`.
 
-<br> Once you've complete this page, click `Next`:
+Once you've complete this page, click `Next`:
 
-<br> Your new organization `aceorg-xxxxx` has now been created:
+Your new organization `aceorg-xxxxx` has now been created:
+
 <img src="./xdocs/images/diagram9.png" alt="drawing" width="800"/>
 
 You can add colleagues to this organization each with a particular role. For
 now, we can use the organization as-is.
 
-<br> Click on `Complete setup` to complete the organization creation process.
+Click on `Complete setup` to complete the organization creation process.
 
-<br> Although you may see a few more screens, such as a usage survey, your
-organization has been now been created. We will use it to host the `ace01-src`
-and `ace01-ops` repositories in this tutorial.
+Although you may see a few more screens, such as a usage survey, your
+organization has been now been created. We will use it to host the `ace01-src` and `ace01-ops` repositories in this tutorial.
 
 ---
 
 ##  Useful environment variables
 
-We now define some environment variables that are used by the commands in this
-tutorial to make them easy to use.
+We now define some environment variables that are used by the commands in this tutorial to make them easy to use.
 
-Define your GitHub user name in the `GITUSER` variable using the name you
-supplied above, e.g. `khongks`. Your GitHub user name will be used to 
+Define your GitHub user name in the `GITUSER` variable using the name you supplied above, e.g. `khongks`. Your GitHub user name will be used to 
 
 Open a new Terminal window and type:
-
 ```bash
 export GITUSER=khongks
 export GITORG=aceorg-$GITUSER
@@ -169,7 +153,6 @@ export GITORG=aceorg-$GITUSER
 Let's use this environment variable to examine your new organization in GitHub.
 
 Enter the following command:
-
 ```bash
 echo https://github.com/orgs/$GITORG/repositories
 ```
@@ -184,26 +167,21 @@ Navigate to this URL in your browser:
 
 <img src="./xdocs/images/diagram10.png" alt="drawing" width="800"/>
 
-You can see that your new organization doesn't yet have any repositories in it.
-Let's start by adding the `ace01-ops` repository to it.
+You can see that your new organization doesn't yet have any repositories in it. Let's start by adding the `ace01-ops` repository to it.
 
 ---
 
 ## Creating the `ace01-ops` repository
 
 We use a [template repository](https://github.com/ace-modernization-demo/ace01-ops) to
-create `ace01-ops` in our new organization. Forking a template creates a
-repository with a clean git history, allowing us to track the history of changes
-to our cluster every time we update `ace01-ops`.
+create `ace01-ops` in our new organization. Forking a template creates a repository with a clean git history, allowing us to track the history of changes to our cluster every time we update `ace01-ops`.
 
-<br> Click on [this
-URL](https://github.com/ace-modernization-demo/ace01-ops/generate) to fork from
-the `ace01-ops` template repository:
+Click on [this
+URL](https://github.com/ace-modernization-demo/ace01-ops/generate) to fork from the `ace01-ops` template repository:
 
 <img src="./xdocs/images/diagram11.png" alt="drawing" width="800"/>
 
-This screen allows you to define the properties for your copy of the `ace01-ops`
-repository.
+This screen allows you to define the properties for your copy of the `ace01-ops` repository.
 
 Specifically:
 
@@ -212,13 +190,13 @@ Specifically:
 * In the `Description` field, specify `Operational repository for ACE`.
 * Select `Public` for the repository visibility.
 
-<br> Click on `Create repository from template`:
+Click on `Create repository from template`:
 
-<br> This repository will be cloned to the specified GitHub account:
+This repository will be cloned to the specified GitHub account:
+
 <img src="./xdocs/images/diagram12.png" alt="drawing" width="800"/>
 
-<br> You have successfully created a copy of the `ace01-ops` repository in your
-organization.
+You have successfully created a copy of the `ace01-ops` repository in your organization.
 
 ---
 
@@ -230,7 +208,6 @@ organization, we use a [Personal Access Token
 (**PAT**). First, we must enable this feature using the GitHub web.
 
 Issue the following command:
-
 ```bash
 echo https://github.com/organizations/$GITORG/settings/personal-access-tokens-onboarding
 ```
@@ -339,55 +316,120 @@ we'll use ArgoCD to achieve it.
 
 ## Explore the `ace01-ops` repository
 
-If you'd like to understand a little bit more about how the namespaces were
-created, you can explore the contents of the `ace01-ops` repository.
+You can explore the contents of the `ace01-ops` repository.
 
-Issue the following command:
+The `environment` folder which contains the YAML files that will be monitored and deployed by GitOps.
+
+- `ci` folder contains deployment for the namespace `ace01-ci`.
+  - `pipelines` folder contains the YAML files to deploy Tekton Pipelines & Tasks in the `ace01-01` namespace.
+- `dev` folder contains deployment for the namespace `ace01-dev`.
+  - `ace01` folder contains the YAML files to deploy App Connect dashboard and integration server.
 
 ```bash
-cat setup/namespaces.yaml
+.
+├── ci
+│   └── pipelines
+│       ├── pipeline.yaml
+│       └── tasks
+│           ├── buildah.yaml
+│           ├── convert-p12-to-jks.yaml
+│           ├── create-bar.yaml
+│           ├── create-config.yaml
+│           ├── create-data-source.yaml
+│           ├── create-integration-server.yaml
+│           ├── create-policy-project.yaml
+│           ├── docker-build.yaml
+│           ├── git-cli.yaml
+│           ├── git-clone.yaml
+│           ├── read-secret.yaml
+│           ├── run-tests.yaml
+│           └── update-templates.yaml
+├── dev
+│   ├── ace01
+│   │   ├── dashboard.yaml
+├── prod
+└── stage
 ```
 
-which shows the following namespace definitions:
+The `setup` folder which contains the YAML files needed to setup the demo. It contains the following subfolders.
 
-```yaml
-kind: Namespace
-apiVersion: v1
-metadata:
-  name: ace01-ci
-  labels:
-    name: ace01-ci
+| Files | Descriptions |
+| --- | --- |
+| `argocd/ci` | Contains script and template to create  ArgoCD application to deploy Tekton Pipelines & Tasks. |
+| `argocd/dev` | Contains script and template to create ArgoCD application to deploy App Connect dashboard and integration server. |
+| `catalogsources/catalog-sources.yaml` | Used to create CatalogSource |
+| `imagestreams/imagestream.yaml` | used to create a ACE Docker image `cp.icr.io/cp/appc/ace-server-prod` in OpenShift image registry so that you don't have to pull from external image registry. |
+| `namespaces/namespaces.yaml` | used to create two namespaces `ace01-ci` and `ace01-dev` |
+| `operators` | folder container YAML files to deploy the operators `ibm-appconnect`, `openshift-gitops-operator` and `openshift-pipelines-operator` (Tekton). |
+| `permissions` |  |
+| `ace-pipeline-deployer-role.yaml`<br>`ace-pipeline-deployer-rolebinding.yaml`<br>`ace-pipeline-deployer-serviceaccount.yaml`| Allow the Tekton to deploy App Connect components | 
+| `ace-role.yaml`<br>`ace-rolebinding.yaml` | Allow Gitops (ArgoCD) to deploy App Connect components |
+| `tekton-role.yaml`<br>`tekton-rolebinding.yaml` | Allow Gitops (ArgoCD to deploy Tekton components) |
+| `secrets` | Contains scripts to Git credential secrets and Dockerconfig secret |
+
+
+```bash
+.
+├── argocd
+│   ├── ci
+│   │   ├── ci.yaml.tmpl
+│   │   └── create-yaml.sh
+│   └── dev
+│       ├── ace01.yaml.tmpl
+│       └── create-yaml.sh
+├── catalogsources
+│   └── catalog-sources.yaml
+├── imagestreams
+│   └── imagestream.yaml
+├── namespaces
+│   └── namespaces.yaml
+├── operators
+│   ├── ace-operator-sub.yaml
+│   ├── argocd-operator-sub.yaml
+│   └── tekton-operator-sub.yaml
+├── permissions
+│   ├── ace-pipeline-deployer-role.yaml
+│   ├── ace-pipeline-deployer-rolebinding.yaml
+│   ├── ace-pipeline-deployer-serviceaccount.yaml
+│   ├── ace-role.yaml
+│   ├── ace-rolebinding.yaml
+│   ├── tekton-role.yaml
+│   └── tekton-rolebinding.yaml
+└── secrets
+    ├── create-dockerconfig-secret.sh
+    ├── create-gitcredentials-secret.sh
+```
+
 ---
-kind: Namespace
-apiVersion: v1
-metadata:
-  name: ace01-dev
-  labels:
-    name: ace01-dev
-```
 
-Issue the following command to show these namespaces in the cluster
+### Create namespace
+
+Issue the following command to create the namespaces.
 
 ```bash
-oc get namespace ace01-ci
-oc get namespace ace01-dev
+oc apply -f setup/namespaces/namespaces.yaml
+```
+
+Use the following command to show these namespaces in the cluster
+
+```bash
+oc get namespaces ace01-ci ace01-dev
 ```
 
 which will shows these namespaces and their age, for example:
 
 ```bash
-NAME      STATUS   AGE
-ace01-ci   Active   18s
-NAME       STATUS   AGE
-ace01-dev   Active   18s
+NAME        STATUS   AGE
+ace01-ci    Active   26d
+ace01-dev   Active   26d
 ```
 
 During this tutorial, we'll see how:
 
-- the `ace01-ci` namespace is used to store specific Kubernetes resources to
-  build, package, version and test `ace01`.
-- the `ace01-dev` namespace is used to store specific Kubernetes resources
-  relating to a running queue manager, `ace01`.
+If you'd like to understand a little bit more about how the namespaces were created, 
+
+- the `ace01-ci` namespace is used to store specific Kubernetes resources to build, package, version and test `ace01`.
+- the `ace01-dev` namespace is used to store specific Kubernetes resources relating to a running queue manager, `ace01`.
 
 ---
 
@@ -398,7 +440,7 @@ Let's install ArgoCD to enable continuous deployment.
 Use the following command to create a subscription for ArgoCD:
 
 ```bash
-oc apply -f setup/argocd-operator-sub.yaml
+oc apply -f setup/operators/argocd-operator-sub.yaml
 ```
 
 which will create a subscription for ArgoCD:
@@ -430,21 +472,16 @@ spec:
 ```
 
 See if you can understand each YAML node, referring to
-[subscriptions](https://olm.operatorframework.io/docs/concepts/crds/subscription/)
-if you need to learn more.
+[subscriptions](https://olm.operatorframework.io/docs/concepts/crds/subscription/) if you need to learn more.
 
 ArgoCD will now install; this may take a few minutes.
 
 ## Verify ArgoCD installation
 
-A
-[ClusterServiceVersion](https://olm.operatorframework.io/docs/concepts/crds/clusterserviceversion/)
-(CSV) is created for each release of the ArgoCD operator installed in the
-cluster. This tells Operator Lifecycle Manager how to deploy and run the
+A [ClusterServiceVersion](https://olm.operatorframework.io/docs/concepts/crds/clusterserviceversion/) (CSV) is created for each release of the ArgoCD operator installed in the cluster. This tells Operator Lifecycle Manager how to deploy and run the
 operator.
 
-We can verify that the installation has completed successfully by examining the
-CSV for ArgoCD.
+We can verify that the installation has completed successfully by examining the CSV for ArgoCD.
 
 Issue the following command:
 
@@ -470,13 +507,9 @@ here; feel free to examine it.
 
 ## Minor modifications to ArgoCD
 
-ArgoCD will deploy `ace01` and its related resources to the cluster. These
-resources are labelled by ArgoCD with a specific `applicationInstanceLabelKey`
-so that they can be tracked for configuration drift. The default label used by
-ArgoCD collides with ACE operator, so we need to change it.
+ArgoCD will deploy `ace01-dev` and its related resources to the cluster. These resources are labelled by ArgoCD with a specific `applicationInstanceLabelKey` so that they can be tracked for configuration drift. The default label used by ArgoCD collides with ACE operator, so we need to change it.
 
-Issue the following command to change the `applicationInstanceLabelKey`used by
-ArgoCD:
+Issue the following command to change the `applicationInstanceLabelKey`used by ArgoCD:
 
 ```bash
 oc patch argocd openshift-gitops  \
@@ -491,22 +524,18 @@ which should respond with:
 argocd.argoproj.io/openshift-gitops patched
 ```
 
-which confirms that the ArgoCD operator has been patched and will now add this
-label to every resource it deploys to the cluster.
+which confirms that the ArgoCD operator has been patched and will now add this label to every resource it deploys to the cluster.
 
 ---
 
-## Role and role binding
+## ACE Deployer role and role binding for GitOps ArgoCD
 
-ArgoCD requires permission to create resources in the `ace01-dev` namespace. We
-use a role to define the resources required to deploy a queue manager, and a
-role binding to associate this role with the `serviceaccount` associated with
-ArgoCD.
+ArgoCD requires permission to create App Connect resources in the `ace01-dev` namespace. We use a `role` to define the resources required to deploy dashboard, integration server and configuration, and a `rolebinding` to associate this `role` with the `serviceaccount` associated with ArgoCD (`openshift-gitops-applicationset-controller`) ~ auto-created when ArgoCD is installed.
 
-Issue the following command to create this `role`:
+Issue the following command to create this `ace-deployer` role:
 
 ```bash
-oc apply -f setup/ace-role.yaml
+oc apply -f setup/permissions/ace-role.yaml
 ```
 
 which confirms that the `ace-deployer` role has been created:
@@ -515,20 +544,19 @@ which confirms that the `ace-deployer` role has been created:
 role.rbac.authorization.k8s.io/ace-deployer created
 ```
 
-Issue the following command to create the corresponding `rolebinding`:
+Issue the following command to create the corresponding `ace-deployer` rolebinding:
 
 ```bash
-oc apply -f setup/ace-rolebinding.yaml
+oc apply -f setup/permissions/ace-rolebinding.yaml
 ```
 
-which confirms that the `ace-deployer` role binding  has been created:
+which confirms that the `ace-deployer` role binding has been created:
 
 ```bash
 rolebinding.rbac.authorization.k8s.io/ace-deployer
 ```
 
-We can see which resources ArgoCD can create in the cluster by examining the
-`ace-deployer` role:
+We can see which resources ArgoCD can create in the cluster by examining the `ace-deployer` role:
 
 ```bash
 oc describe role ace-deployer -n ace01-dev
@@ -549,23 +577,81 @@ PolicyRule:
   integrationservers.appconnect.ibm.com  []                 []              [*]
 ```
 
-See how ArgoCD can now control `secrets`, `services`, `MQservices` and
-`ingresses` with all operations such as create, read, update and delete (i.e.
-`Verbs[*]`).
+See how ArgoCD can now control `secrets`, `services`, `configurations.appconnect.ibm.com` and `integrationservers.appconnect.ibm.com` with all operations such as create, read, update and delete (i.e. `Verbs[*]`).
+
+---
+
+## Pipeline Deployer role and role binding for GitOps ArgoCD
+
+ArgoCD requires permission to create OpenShift Pipelines (Tekton) resources in the `ace01-ci` namespace. We use a `role` to define the resources required to deploy pipeline, tasks and a `rolebinding` to associate this `role` with the `serviceaccount` associated with ArgoCD (`openshift-gitops-applicationset-controller`) ~ auto-created when ArgoCD is installed.
+
+Issue the following command to create this `pipeline-deployer` role:
+
+```bash
+oc apply -f setup/permissions/pipeline-role.yaml
+```
+
+which confirms that the `pipeline-deployer` role has been created:
+
+```bash
+role.rbac.authorization.k8s.io/pipeline-deployer created
+```
+
+Issue the following command to create the corresponding `pipeline-deployer` rolebinding
+
+```bash
+oc apply -f setup/permissions/pipeline-rolebinding.yaml
+```
+
+which confirms that the `pipeline-deployer` role binding has been created:
+
+```bash
+rolebinding.rbac.authorization.k8s.io/pipeline-deployer
+```
+
+We can see which resources ArgoCD can create in the cluster by examining the `pipeline-deployer` role:
+
+```bash
+oc describe role pipeline-deployer -n ace01-ci
+```
+
+which returns:
+
+```bash
+Name:         pipeline-deployer
+Labels:       <none>
+Annotations:  <none>
+PolicyRule:
+  Resources                                   Non-Resource URLs  Resource Names  Verbs
+  ---------                                   -----------------  --------------  -----
+  clusterinterceptors.tekton.dev              []                 []              [*]
+  clustertasks.tekton.dev                     []                 []              [*]
+  customruns.tekton.dev                       []                 []              [*]
+  pipelineruns.tekton.dev                     []                 []              [*]
+  pipelines.tekton.dev                        []                 []              [*]
+  taskruns.tekton.dev                         []                 []              [*]
+  tasks.tekton.dev                            []                 []              [*]
+  verificationpolicies.tekton.dev             []                 []              [*]
+  clustertriggerbindings.triggers.tekton.dev  []                 []              [*]
+  eventlisteners.triggers.tekton.dev          []                 []              [*]
+  interceptors.triggers.tekton.dev            []                 []              [*]
+  triggerbindings.triggers.tekton.dev         []                 []              [*]
+  triggers.triggers.tekton.dev                []                 []              [*]
+  triggertemplates.triggers.tekton.dev        []                 []              [*]
+```
+
+See how ArgoCD can now control `pipelines`, `tasks` and other objects with all operations such as create, read, update and delete (i.e. `Verbs[*]`).
 
 ---
 
 ## Add IBM catalog sources
 
-Like ArgoCD, there is a dedicated operator that manages queue managers in
-the cluster. Unlike ArgoCD, its definition is held in the IBM [catalog
-source](https://olm.operatorframework.io/docs/concepts/crds/catalogsource/), so
-we need to add this catalog source to the cluster before we can install it.
+Like ArgoCD, there is a dedicated operator that manages queue managers in the cluster. Unlike ArgoCD, its definition is held in the IBM [catalog source](https://olm.operatorframework.io/docs/concepts/crds/catalogsource/), so we need to add this catalog source to the cluster before we can install it.
 
 Issue the following command:
 
 ```bash
-oc apply -f setup/catalog-sources.yaml
+oc apply -f setup/catalogsources/catalog-sources.yaml
 ```
 
 which will add the catalog sources defined in this YAML to the cluster:
@@ -575,11 +661,10 @@ catalogsource.operators.coreos.com/opencloud-operators created
 catalogsource.operators.coreos.com/ibm-operator-catalog created
 ```
 
-Notice, that there actually **two** new catalog sources added; feel free to
-examine the catalog source YAML:
+Notice, that there actually **two** new catalog sources added; feel free to examine the catalog source YAML:
 
 ```bash
-cat setup/catalog-sources.yaml
+cat setup/catalogsources/catalog-sources.yaml
 ```
 
 which shows you the detailed YAML for these catalog sources:
@@ -626,7 +711,7 @@ We can now install the ACE operator; using the same process as we used with Argo
 Issue the following command:
 
 ```bash
-oc apply -f setup/ace-operator-sub.yaml
+oc apply -f setup/operators/ace-operator-sub.yaml
 ```
 
 which will create the ACE operator subscription:
@@ -638,7 +723,7 @@ subscription.operators.coreos.com/ace-operator created
 Explore the subscription using the following command:
 
 ```bash
-cat setup/ace-operator-sub.yaml
+cat setup/operators/ace-operator-sub.yaml
 ```
 
 which details the subscription:
@@ -660,12 +745,9 @@ spec:
   startingCSV: ibm-appconnect.v9.1.0
 ```
 
-Notice how this operator is installed in the `openshift-operators` namespace.
-Note also the use of `channel` and `startingCSV` to be precise about the exact
-version of the ACE operator to be installed.
+Notice how this operator is installed in the `openshift-operators` namespace. Note also the use of `channel` and `startingCSV` to be precise about the exact version of the ACE operator to be installed.
 
-Again, feel free to verify the ACE installation with the following
-commands:
+Again, feel free to verify the ACE installation with the following commands:
 
 ```bash
 oc get clusterserviceversion ibm-appconnect.v9.1.0 -n openshift-operators
@@ -682,23 +764,18 @@ which shows that the 9.1.0 version of the operator has been successfully install
 oc describe csv ibm-appconnect.v9.1.0 -n openshift-operators
 ```
 
-The output provides an extensive amount of information not listed
-here; feel free to examine it.
+The output provides an extensive amount of information not listed here; feel free to examine it.
 
 ---
 
 ## Install Tekton pipelines
 
-Our final task is to install Tekton.  With it, we can create pipelines that
-populate the operational repository `ace01-ops` using the ACE configuration
-and development artifacts stored in `ace01-src`. Once populated by Tekton, ArgoCD
-will then synchronize these artifacts with the cluster to ensure the cluster is
-running the most up-to-date version of `ace01`.
+Our final task is to install Tekton. With it, we can create pipelines that populate the operational repository `ace01-ops` using the ACE configuration and development artifacts stored in `ace01-src`. Once populated by Tekton, ArgoCD will then synchronize these artifacts with the cluster to ensure the cluster is running the most up-to-date version of `ace01`.
 
 Issue the following command to create a subscription for Tekton:
 
 ```bash
-oc apply -f setup/tekton-operator-sub.yaml
+oc apply -f setup/operators/tekton-operator-sub.yaml
 ```
 
 which will create a subscription:
@@ -707,13 +784,12 @@ which will create a subscription:
 subscription.operators.coreos.com/openshift-pipelines-operator created
 ```
 
-Again, this subscription enables the cluster to keep up-to-date with new version
-of Tekton.
+Again, this subscription enables the cluster to keep up-to-date with new version of Tekton.
 
 Explore the subscription using the following command:
 
 ```bash
-cat setup/tekton-operator-sub.yaml
+cat setup/operators/tekton-operator-sub.yaml
 ```
 
 which details the subscription:
@@ -733,6 +809,7 @@ spec:
 ```
 
 Manual Tekton install:
+
 ```bash
 oc apply -f https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 ```
@@ -752,40 +829,104 @@ oc describe csv openshift-pipelines-operator-rh.vx.y.z -n openshift-operators
 
 ---
 
-## Create a secret to contain the PAT for use by Tekton.
+## Create a secret to contain the Github Personal Access Token (PAT) use by Pipelines (Tekton)
 
-The PAT we created earlier is now stored as a secret in the `ace01-ci` namespace
-and used by the pipeline whenever it needs to access the `ace01-src` and
-`ace01-ops` repositories.
+The PAT we created earlier is now stored as a secret called `gitcredentials-secret` in the `ace01-ci` namespace and used by the pipeline whenever it needs to access the `ace01-src` and `ace01-ops` repositories.
 
-Issue the following command to create a secret containing the PAT:
+Issue the following command to create a secret containing the Personal Access Token (PAT):
 
 ```bash
-export GITCONFIG=$(printf "[credential \"https://github.com\"]\n  helper = store")
-oc create secret generic ace01-git-credentials -n ace01-ci \
-  --from-literal=.gitconfig="$GITCONFIG" \
-  --from-literal=.git-credentials="https://$GITUSER:$GITTOKEN@github.com" \
-  --type=Opaque \
-  --dry-run=client -o yaml > .ssh/ace01-git-credentials.yaml
+export GITUSER=<Your Github username>
+export GITTOKEN=<Your Github PAT>
+
+cd setup/secrets
+./create-gitcredentials-secret.sh
 ```
 
-Issue the following command to create this secret in the cluster:
-
-```bash
-oc apply -f .ssh/ace01-git-credentials.yaml
-```
-
-Finally, add this secret to the `pipeline` service account to allow it to use
-`ace-1-ssh-credentials` secret to access GitHub.
+<!-- Finally, add this secret to the `pipeline` service account to allow it to use `ace-1-ssh-credentials` secret to access GitHub.
 
 ```bash
 oc patch serviceaccount pipeline \
     --namespace ace01-ci \
     --type merge \
     --patch '{"secrets":[{"name":"ace01-git-credentials"}]}'
+``` -->
+---
+
+## Create a secret to contain the Dockerconfig use by Pipelines (Tekton)
+
+Following the instructions [here](https://www.ibm.com/docs/en/cloud-paks/cp-integration/2023.2?topic=fayekoi-finding-applying-your-entitlement-key-by-using-ui-online-installation) to obtain the IBM entitlement key for Cloud Pak for Integration.
+
+Issue the following command to create a secret containing the Dockerconfig:
+
+```bash
+export IBM_ENTITLEMENT_KEY=<Your IBM entitlement key>
+
+cd setup/secrets
+./create-dockerconfig-secret.sh
 ```
 
 ---
+
+## ACE Pipeline Deployer role and role binding for OpenShift Pipelines (Tekton)
+
+Issue the following command to create a `serviceaccount` for Pipeline (Tekton):
+
+```bash
+oc apply -f setup/permissions/ace-pipeline-serviceaccount.yaml
+```
+
+Issue the following command to create a `role` that allows the `serviceaccount` to manipulate `imagestreams`, `buildconfig`, etc.
+
+```bash
+oc apply -f setup/permissions/ace-pipeline-deployer-role.yaml
+```
+
+Finally, issue the following command to create a `rolebinding` that links the `serviceaccount` to its `role`:
+
+```bash
+oc apply -f setup/permissions/ace-pipeline-rolebinding.yaml
+```
+
+---
+
+## Create a imagestream for IBM Certified Container image
+
+Issue the following command to create an imagestream of the IBM Certified image.
+
+```bash
+oc apply -f setup/imagestreams/imagestream.yaml
+```
+
+Review the YAML file
+
+```bash
+cat setup/imagestreams/imagestream.yaml
+```
+
+The `ace-server-prod` IBM certified container image pulled into the buit-in OpenShift image registry for easier access. 
+```
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: ace-server-prod
+  namespace: ace01-ci
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - name: latest-amd64
+      from:
+        kind: DockerImage
+        name: cp.icr.io/cp/appc/ace-server-prod@sha256:246828d9f89c4ed3a6719cd3e4b71b1dec382f848c9bf9c28156f78fa05bc4e7
+      importPolicy:
+        importMode: Legacy
+      referencePolicy:
+        type: Source   
+```
+
+
+<!-- ## Allow the `serviceaccount` of ibm
 
 ## Image registry
 
@@ -797,17 +938,20 @@ oc policy add-role-to-user system:image-puller system:serviceaccount:ace01-dev:a
 ```
 
 ```bash
-// oc adm policy  add-cluster-role-to-user edit system:serviceaccount:ace01-ci:pipeline // not sure we need this?
-```
+// oc adm policy  add-cluster-role-to-user edit system:serviceaccount:ace01-ci:pipeline // not sure we need this? -->
 
 ---
 
-## An ArgoCD application to manage `ace01`
+## An ArgoCD application to manage `ace01-ci`
 
-Finally, we're going to create an ArgoCD application to manage the queue manager
-`ace01`. The YAMLs for `ace01` will be created by its Tekton pipeline in
-`ace01-ops`. Every time this repository is updated, our ArgoCD application will
-ensure that the latest version of `ace01` is deployed to the cluster.
+Finally, we're going to create an ArgoCD application to manage the ACE integration server `ace01`. The YAMLs for `ace01` will be created by its Tekton pipeline in
+`ace01-ops`. Every time this repository is updated, our ArgoCD application will ensure that the latest version of `ace01` is deployed to the cluster.
+
+
+## An ArgoCD application to manage `ace01-dev`
+
+Finally, we're going to create an ArgoCD application to manage the ACE integration server `ace01`. The YAMLs for `ace01` will be created by its Tekton pipeline in
+`ace01-ops`. Every time this repository is updated, our ArgoCD application will ensure that the latest version of `ace01` is deployed to the cluster.
 
 Let's have a quick look at our ArgoCD application.
 
@@ -858,8 +1002,7 @@ resources to deploy to the cluster:
 
 See how:
   - `repoURL: https://github.com/$GITORG/ace01-ops.git` identifies the repository
-    where the YAMLs are located ($GITORG will be replaced with your GitHub
-    organization)
+    where the YAMLs are located ($GITORG will be replaced with your GitHub organization)
   - `targetRevision: main` identifies the branch within the repository
   - `path: environments/dev/ace01/` identifies the folder within the repository
 
@@ -934,11 +1077,8 @@ folder with the YAMLs for the `ace01` queue manager.
 
 ## Congratulations
 
-You've configured your cluster for ACE. Let's run a pipeline to populate
-the `ace01-ops` repository. This pipeline is held in the source repository
-`ace01-src`; it also holds the configuration for the `ace01` queue manager.
+You've configured your cluster for ACE. Let's run a pipeline to populate the `ace01-ops` repository. This pipeline is held in the source repository `ace01-src`; it also holds the configuration for the `ace01` queue manager.
 
-Continue [here](https://github.com/ace-modernization-demo/ace01-src#introduction) to fork
-your copy of the `ace01-src` repository.
+Continue [here](https://github.com/ace-modernization-demo/ace01-src#introduction) to fork your copy of the `ace01-src` repository.
 
 ---

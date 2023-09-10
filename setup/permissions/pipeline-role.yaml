@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: ace01-ci
+  name: pipeline-deployer
+rules:
+- apiGroups: ["tekton.dev"]
+  resources: ["clusterinterceptors", "clustertasks", "customruns", "pipelineruns", "pipelines", "taskruns", "tasks", "verificationpolicies"]
+  verbs: ["*"]
+- apiGroups: ["triggers.tekton.dev"]
+  resources: ["clustertriggerbindings","eventlisteners", "interceptors", "triggerbindings", "triggers", "triggertemplates"]
+  verbs: ["*"]
